@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>努力計測クエスト Ultimate Level Up</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #121214; --card: #1e1e24; --muted: #2a2a32;
+  --text: #f0f0f5; --sub: #9090a0;
+  --accent: #FFB800; --red: #ff4757; --green: #2ed573; --blue: #70a1ff;
+  --border: rgba(255,255,255,0.1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 1rem; max-width: 500px; margin: 0 auto; min-height: 100vh; }
+
+/* 🔒 パスワード保護画面のスタイル */
+#auth-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+.auth-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  width: 100%;
+}
+.auth-card h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+.auth-card p {
+  font-size: 12px;
+  color: var(--sub);
+  margin-bottom: 16px;
+}
+.auth-card input[type="password"] {
+  width: 100%;
+  background: var(--muted);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.auth-card input[type="password"]:focus {
+  border-color: var(--accent);
+}
+.auth-card button {
+  width: 100%;
+  background: var(--accent);
+  color: #000;
+  font-weight: bold;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+#auth-error {
+  color: var(--red);
+  font-size: 12px;
+  margin-top: 10px;
+  display: none;
+}
+
+/* 🎮 メインコンテンツエリア（初期状態は非表示） */
+#main-app {
+  display: none;
+}
+
+@keyframes flashRed {
+  0% { background-color: rgba(255,71,87,0.5); }
+  100% { background-color: var(--bg); }
+}
+.flash-red { animation: flashRed 0.6s ease-out; }
+
+.header { text-align: center; margin-bottom: 1rem; }
+.chara-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; text-align: center; position: relative; }
+.chara-avatar { font-size: 56px; margin: 0.25rem 0; }
+.level-badge { display: inline-block; background: var(--accent); color: #000; font-weight: bold; font-size: 11px; padding: 3px 12px; border-radius: 12px; }
+
+/* 🌟 PT表示エリア */
+.pt-display-group { display: flex; justify-content: center; gap: 12px; margin-top: 8px; }
+.pt-badge { background: var(--muted); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: bold; }
+.pt-badge.temp { border-color: var(--blue); color: var(--blue); }
+
+.level-progress-container { margin-top: 10px; }
+.level-progress-bar { background: var(--muted); height: 10px; border-radius: 5px; overflow: hidden; position: relative; border: 1px solid var(--border); }
+.level-progress-fill { background: linear-gradient(90deg, #FFB800, #2ed573); height: 100%; width: 0%; transition: width 0.4s ease; }
+.level-progress-text { font-size: 10px; color: var(--sub); margin-top: 4px; display: flex; justify-content: space-between; }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; margin-top: 1rem; }
+.card-title { font-size: 13px; font-weight: bold; color: var(--sub); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; }
+
+/* ⏱️ タイマー＆入力 */
+.input-group { display: flex; gap: 8px; margin-bottom: 8px; }
+input[type="text"] { flex: 1; background: var(--muted); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 10px; font-size: 13px; outline: none; }
+input[type="text"]:focus { border-color: var(--accent); }
+
+select { background: var(--muted); border: 1px solid var(--border); color: var(--text); padding: 0 8px; border-radius: 10px; font-size: 12px; outline: none; cursor: pointer; }
+select:focus { border-color: var(--accent); }
+
+.btn-eval { background: var(--accent); color: #000; font-weight: bold; border: none; padding: 0 16px; border-radius: 10px; cursor: pointer; white-space: nowrap; }
+
+.timer-display { font-size: 32px; font-weight: 900; text-align: center; font-family: monospace; color: var(--accent); margin: 6px 0; }
+.timer-btn-group { display: flex; gap: 8px; justify-content: center; }
+.btn-timer { background: var(--muted); border: 1px solid var(--border); color: var(--text); padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; }
+.btn-timer.primary { background: var(--accent); color: #000; border: none; }
+
+/* 💣 4x4 16マスゲーム */
+.grid-game { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+.grid-tile { background: var(--muted); border: 2px solid var(--border); border-radius: 10px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.1s, background 0.2s; }
+.grid-tile:active { transform: scale(0.95); }
+.grid-tile.opened { cursor: default; }
+
+.game-status-board { background: var(--muted); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-top: 10px; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
+.game-status-row { display: flex; justify-content: space-between; align-items: center; }
+.val-highlight { font-weight: bold; color: var(--accent); }
+.val-green { font-weight: bold; color: var(--green); }
+
+.collection-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 10px; }
+.col-item { background: var(--muted); border: 1px solid var(--border); border-radius: 8px; text-align: center; padding: 6px 0; font-size: 20px; opacity: 0.2; }
+.col-item.unlocked { opacity: 1; border-color: var(--accent); }
+
+.chip-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.chip { background: var(--muted); border: 1px solid var(--border); color: var(--text); font-size: 11px; padding: 6px 12px; border-radius: 16px; cursor: pointer; }
+.chip:active { background: var(--border); }
+
+/* グラフ */
+.graph-container { width: 100%; height: 130px; margin-top: 8px; }
+canvas { width: 100%; height: 100%; }
+
+/* 判定結果 */
+.result-box { display: none; border-radius: 12px; padding: 0.75rem; margin-top: 10px; text-align: center; border: 1px solid var(--border); }
+.result-box.plus { background: rgba(46, 213, 115, 0.1); border-color: var(--green); }
+.result-box.minus { background: rgba(255, 71, 87, 0.2); border-color: var(--red); }
+.res-pts { font-size: 20px; font-weight: 900; }
+.res-pts.plus { color: var(--green); }
+.res-pts.minus { color: var(--red); }
+.res-reason { font-size: 11px; color: var(--sub); margin-top: 2px; }
+
+.log-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.pts-plus { color: var(--green); font-weight: bold; }
+.pts-minus { color: var(--red); font-weight: bold; }
+.btn-reset { background: rgba(255,71,87,0.1); color: var(--red); border: 1px solid var(--red); padding: 4px 8px; border-radius: 6px; font-size: 10px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<!-- 🔒 パスワード入力エリア -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <h2>🔒 閲覧制限</h2>
+    <p>パスワードを入力してクエストを開始してください</p>
+    <input type="password" id="pass-input" placeholder="パスワードを入力">
+    <button onclick="authenticate()">スタート</button>
+    <div id="auth-error">パスワードが間違っています</div>
+  </div>
+</div>
+
+<!-- 🎮 メインアプリ画面（認証成功後に表示） -->
+<div id="main-app">
+  <div class="header">
+    <h2 style="font-size: 18px;">🔥 努力計測クエスト Level Up</h2>
+  </div>
+
+  <!-- キャラクター & PT / レベル進捗 -->
+  <div class="chara-card">
+    <div class="level-badge" id="lvl-badge">Lv.1 見習い</div>
+    <div class="chara-avatar" id="chara-icon">🥚</div>
+    
+    <div class="pt-display-group">
+      <div class="pt-badge" id="total-pts-text">本PT: 0</div>
+      <div class="pt-badge temp" id="temp-pts-text" title="本日中に努力すると2:1で本PTへ変換">仮PT: 0 (今日限定)</div>
+    </div>
+    
+    <!-- 進捗ゲージ -->
+    <div class="level-progress-container">
+      <div class="level-progress-bar">
+        <div class="level-progress-fill" id="lvl-progress-fill"></div>
+      </div>
+      <div class="level-progress-text">
+        <span id="lvl-curr-pt">0 PT</span>
+        <span id="lvl-next-text">次まで: 100 PT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⏱️ 集中タイマー記録 -->
+  <div class="card">
+    <div class="card-title"><span><i class="ti ti-timer"></i> 集中タイマーで努力記録</span></div>
+    <div class="input-group">
+      <input type="text" id="timer-task-input" placeholder="何をする？ (例: 数学、読書)" maxlength="30">
+    </div>
+    <div class="chip-container">
+      <div class="chip" onclick="setTimerTask('数学')">✏️ 数学</div>
+      <div class="chip" onclick="setTimerTask('英語')">📖 英語</div>
+      <div class="chip" onclick="setTimerTask('筋トレ')">💪 筋トレ</div>
+      <div class="chip" onclick="setTimerTask('読書')">📚 読書</div>
+    </div>
+    <div class="timer-display" id="timer-display">00:00</div>
+    <div class="timer-btn-group">
+      <button class="btn-timer primary" id="timer-start-btn" onclick="toggleTimer()">スタート</button>
+      <button class="btn-timer" onclick="resetTimer()">リセット</button>
+    </div>
+  </div>
+
+  <!-- ✍️ 手動判定・記録 -->
+  <div class="card">
+    <div class="card-title"><span><i class="ti ti-pencil"></i> 手動入力で判定・換金</span></div>
+    
+    <div class="chip-container">
+      <div class="chip" onclick="appendManualTask('数学')">✏️ 数学</div>
+      <div class="chip" onclick="appendManualTask('英語')">📖 英語</div>
+      <div class="chip" onclick="appendManualTask('筋トレ')">💪 筋トレ</div>
+      <div class="chip" onclick="appendManualTask('読書')">📚 読書</div>
+      <div class="chip" onclick="appendManualTask('プログラミング')">💻 開発</div>
+    </div>
+
+    <div class="input-group">
+      <input type="text" id="effort-input" placeholder="例: 数学 2時間" maxlength="50">
+      
+      <select id="time-select" onchange="applyTimeSelect()">
+        <option value="">時間選択</option>
+        <option value="15分">15分</option>
+        <option value="30分">30分</option>
+        <option value="1時間">1時間</option>
+        <option value="1.5時間">1時間</option>
+        <option value="2時間">2時間</option>
+        <option value="3時間">3時間</option>
+        <option value="5時間">5時間</option>
+      </select>
+
+      <button class="btn-eval" onclick="evaluateEffort()">判定</button>
+    </div>
+
+    <div class="result-box" id="result-box">
+      <div class="res-pts" id="res-pts">+0 PT</div>
+      <div class="res-reason" id="res-reason">判定結果</div>
+    </div>
+  </div>
+
+  <!-- 📊 過去10回の累計PT推移グラフ -->
+  <div class="card">
+    <div class="card-title"><span><i class="ti ti-chart-line"></i> 本PT推移（過去10回）</span></div>
+    <div class="graph-container">
+      <canvas id="cumulChart"></canvas>
+    </div>
+  </div>
+
+  <!-- 💣 16マス(4x4) 爆弾回避ミニゲーム -->
+  <div class="card">
+    <div class="card-title">
+      <span><i class="ti ti-bomb"></i> 4×4 爆弾回避（参加費 100 本PT）</span>
+      <button class="btn-timer" onclick="startGridGame()" style="padding: 2px 8px;" id="game-start-btn">挑戦スタート</button>
+    </div>
+    <div style="font-size: 11px; color: var(--sub);" id="grid-msg">「挑戦スタート」を押してゲーム開始！</div>
+    
+    <div class="game-status-board">
+      <div class="game-status-row">
+        <span>ストック中の仮PT:</span>
+        <span class="val-green" id="stat-current-pt">0 仮PT</span>
+      </div>
+      <div class="game-status-row">
+        <span>次当てたら増える仮PT:</span>
+        <span class="val-highlight" id="stat-next-add">+75 仮PT</span>
+      </div>
+      <div class="game-status-row">
+        <span>次成功する正確な確率:</span>
+        <span class="val-highlight" id="stat-prob">87.5% (14/16)</span>
+      </div>
+    </div>
+
+    <div class="grid-game" id="grid-board"></div>
+    
+    <div style="margin-top: 12px; font-size: 11px; color: var(--sub);">コレクション</div>
+    <div class="collection-grid" id="collection-grid"></div>
+  </div>
+
+  <!-- ログ & リセット -->
+  <div class="card">
+    <div class="card-title">
+      <span><i class="ti ti-history"></i> 行動ログ</span>
+      <button class="btn-reset" onclick="resetAllData()">全リセット</button>
+    </div>
+    <div id="log-list"></div>
+  </div>
+</div>
+
+<script>
+// 🔑 パスワード設定（必要に応じて変更してください）
+const PASS = "your_secret_pass"; 
+
+function authenticate() {
+  const input = document.getElementById('pass-input').value;
+  const err = document.getElementById('auth-error');
+  if (input === PASS) {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('main-app').style.display = 'block';
+    // 認証完了後にグラフ等の初期描画を実行
+    checkDailyReset();
+    initBoardDisplay();
+    updateUI();
+    setTimeout(drawCumulGraph, 100);
+  } else {
+    err.style.display = 'block';
+  }
+}
+
+// Enterキー入力での認証対応
+document.getElementById('pass-input').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    authenticate();
+  }
+});
+
+let totalPts = Math.max(0, Number(localStorage.getItem('proto_pro_pts')) || 0);
+let tempPts = Math.max(0, Number(localStorage.getItem('proto_temp_pts')) || 0);
+let lastDate = localStorage.getItem('proto_last_date') || "";
+
+let logs = JSON.parse(localStorage.getItem('proto_pro_logs')) || [];
+let unlockedGacha = JSON.parse(localStorage.getItem('proto_gacha_col')) || [];
+
+// 📅 日付チェック（1日経過で仮PT失効）
+function checkDailyReset() {
+  const today = new Date().toISOString().split('T')[0];
+  if (lastDate && lastDate !== today) {
+    if (tempPts > 0) {
+      alert(`⚠️ 日付が変わったため、未換金の仮PT (${tempPts} PT) は失効しました。`);
+      tempPts = 0;
+      localStorage.setItem('proto_temp_pts', 0);
+    }
+  }
+  lastDate = today;
+  localStorage.setItem('proto_last_date', today);
+}
+
+const LEVEL_TABLE = [
+  { pt: 0, lvl: 1, title: "Lv.1 タマゴ", icon: "🥚" },
+  { pt: 100, lvl: 2, title: "Lv.2 ひよこ", icon: "🐣" },
+  { pt: 300, lvl: 3, title: "Lv.3 見習い勇者", icon: "🏃" },
+  { pt: 600, lvl: 4, title: "Lv.4 熟練アドベンチャラー", icon: "⚔️" },
+  { pt: 1000, lvl: 5, title: "Lv.5 努力の達人", icon: "🔥" },
+  { pt: 2000, lvl: 6, title: "Lv.6 伝説の努力家", icon: "👑" }
+];
+
+const GACHA_ITEMS = [
+  { id: 0, icon: "👾", name: "ドットスライム", rarity: "C" },
+  { id: 1, icon: "🤖", name: "ロボット", rarity: "C" },
+  { id: 2, icon: "👽", name: "エイリアン", rarity: "R" },
+  { id: 3, icon: "🧙‍♂️", name: "魔法使い", rarity: "R" },
+  { id: 4, icon: "🦿", name: "サイボーグ", rarity: "SR" },
+  { id: 5, icon: "🦄", name: "伝説の勇者", rarity: "UR" }
+];
+
+// --- 🌟 レベル進捗更新 ---
+function updateLevelProgress() {
+  let currentLvlObj = LEVEL_TABLE[0];
+  let nextLvlObj = null;
+
+  for (let i = 0; i < LEVEL_TABLE.length; i++) {
+    if (totalPts >= LEVEL_TABLE[i].pt) {
+      currentLvlObj = LEVEL_TABLE[i];
+      nextLvlObj = LEVEL_TABLE[i + 1] || null;
+    } else {
+      break;
+    }
+  }
+
+  document.getElementById('lvl-badge').textContent = currentLvlObj.title;
+  document.getElementById('chara-icon').textContent = currentLvlObj.icon;
+  document.getElementById('lvl-curr-pt').textContent = `${totalPts} 本PT`;
+
+  if (nextLvlObj) {
+    const prevPt = currentLvlObj.pt;
+    const nextPt = nextLvlObj.pt;
+    const progressPercent = Math.min(100, Math.max(0, ((totalPts - prevPt) / (nextPt - prevPt)) * 100));
+    
+    document.getElementById('lvl-progress-fill').style.width = `${progressPercent}%`;
+    document.getElementById('lvl-next-text').textContent = `次まで: ${nextPt - totalPts} 本PT`;
+  } else {
+    document.getElementById('lvl-progress-fill').style.width = "100%";
+    document.getElementById('lvl-next-text').textContent = "MAX LEVEL!";
+  }
+}
+
+// --- ✍️ 手動入力サポート ---
+function appendManualTask(taskName) {
+  document.getElementById('effort-input').value = taskName;
+}
+
+function applyTimeSelect() {
+  const select = document.getElementById('time-select');
+  const selectedTime = select.value;
+  if (!selectedTime) return;
+
+  const input = document.getElementById('effort-input');
+  let currentVal = input.value.trim().replace(/\s*\d+(\.\d+)?(時間|分)/g, '');
+  input.value = currentVal ? `${currentVal} ${selectedTime}` : selectedTime;
+  select.value = "";
+}
+
+// --- ⚙️ 仮PT ➔ 本PT 変換処理 ---
+function convertTempToRealPts(effortBasePt) {
+  if (tempPts <= 0) return { realGained: effortBasePt, tempUsed: 0 };
+
+  const maxTempCanConvert = effortBasePt * 2;
+  const tempUsed = Math.min(tempPts, maxTempCanConvert);
+  const convertedRealPt = Math.floor(tempUsed / 2);
+
+  tempPts -= tempUsed;
+  const totalRealGained = effortBasePt + convertedRealPt;
+
+  localStorage.setItem('proto_temp_pts', tempPts);
+  return { realGained: totalRealGained, tempUsed };
+}
+
+// --- ⏱️ タイマー機能 ---
+let timerInterval = null;
+let timerSeconds = 0;
+let isTimerRunning = false;
+
+function setTimerTask(name) {
+  document.getElementById('timer-task-input').value = name;
+}
+
+function toggleTimer() {
+  const taskInput = document.getElementById('timer-task-input');
+  const taskName = taskInput.value.trim() || "集中作業";
+  const btn = document.getElementById('timer-start-btn');
+
+  if (!isTimerRunning) {
+    isTimerRunning = true;
+    btn.textContent = "ストップ";
+    btn.style.background = "var(--red)";
+    btn.style.color = "#fff";
+    timerInterval = setInterval(() => {
+      timerSeconds++;
+      updateTimerDisplay();
+    }, 1000);
+  } else {
+    isTimerRunning = false;
+    clearInterval(timerInterval);
+    btn.textContent = "スタート";
+    btn.style.background = "var(--accent)";
+    btn.style.color = "#000";
+
+    const mins = Math.floor(timerSeconds / 60);
+    const secs = timerSeconds % 60;
+    const timeText = mins > 0 ? `${mins}分` : `${secs}秒`;
+    const basePt = Math.max(10, mins * 10 || 10);
+
+    const { realGained, tempUsed } = convertTempToRealPts(basePt);
+
+    let msg = `⏱️ 【${taskName}】(${timeText}) 達成！\n+${realGained} 本PT獲得！`;
+    if (tempUsed > 0) {
+      msg += `\n(仮PT ${tempUsed}pt を消費して本PTに変換しました)`;
+    }
+
+    alert(msg);
+    addLog(`集中: ${taskName} (${timeText})`, realGained, tempUsed > 0 ? `仮PT ${tempUsed}消費` : '基本評価');
+    timerSeconds = 0;
+    updateTimerDisplay();
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  isTimerRunning = false;
+  timerSeconds = 0;
+  updateTimerDisplay();
+  const btn = document.getElementById('timer-start-btn');
+  btn.textContent = "スタート";
+  btn.style.background = "var(--accent)";
+  btn.style.color = "#000";
+}
+
+function updateTimerDisplay() {
+  const m = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+  const s = String(timerSeconds % 60).padStart(2, '0');
+  document.getElementById('timer-display').textContent = `${m}:${s}`;
+}
+
+// --- ✍️ 手動判定ロジック ---
+function checkNegative(text) {
+  const directNegatives = ["サボっ", "寝てた", "寝坊", "遅刻", "ダラダラ", "忘れた", "怠けた", "YouTube", "TikTok", "スマホいじっ"];
+  for (let w of directNegatives) {
+    if (text.includes(w)) return { isNeg: true, reason: `ネガティブ行動（${w}）` };
+  }
+  if (/(せずに|しないで|打ち切って|途中でやめて|〜だけやって).*(ゲーム|遊|寝|スマホ)/.test(text) || /だけやって.*(寝|サボ|遊)/.test(text)) {
+    return { isNeg: true, reason: "言い訳・計画中断" };
+  }
+  if (/(ゲーム|マンガ|漫画|遊んだ)/.test(text) && !/(作った|開発|勉強|研究)/.test(text)) {
+    return { isNeg: true, reason: "娯楽・誘惑タスク" };
+  }
+  return { isNeg: false };
+}
+
+function evaluateEffort() {
+  const inputEl = document.getElementById('effort-input');
+  const text = inputEl.value.trim();
+  if (!text) return;
+
+  let basePt = 0;
+  let reasons = [];
+  const negCheck = checkNegative(text);
+
+  if (negCheck.isNeg) {
+    basePt = -60;
+    reasons.push(negCheck.reason);
+    document.body.classList.remove('flash-red');
+    void document.body.offsetWidth;
+    document.body.classList.add('flash-red');
+
+    addLog(text, basePt, reasons.join("・"));
+  } else {
+    basePt = 20;
+    const hourMatch = text.match(/(\d+(\.\d+)?)\s*時間/);
+    const minMatch = text.match(/(\d+)\s*分/);
+
+    if (hourMatch) {
+      basePt += Math.min(Math.round(parseFloat(hourMatch[1]) * 40), 160);
+    } else if (minMatch) {
+      basePt += Math.min(Math.round(parseInt(minMatch[1]) * 0.6), 60);
+    }
+
+    const { realGained, tempUsed } = convertTempToRealPts(basePt);
+    
+    reasons.push("手動入力");
+    if (tempUsed > 0) reasons.push(`仮PT ${tempUsed}消費`);
+
+    const resBox = document.getElementById('result-box');
+    document.getElementById('res-pts').className = `res-pts plus`;
+    document.getElementById('res-pts').textContent = `+${realGained} 本PT`;
+    document.getElementById('res-reason').textContent = `判定理由: ${reasons.join("・")}`;
+    resBox.className = `result-box plus`;
+    resBox.style.display = 'block';
+
+    addLog(text, realGained, reasons.join("・"));
+  }
+
+  inputEl.value = '';
+}
+
+// ログ記録
+function addLog(text, pts, reason) {
+  totalPts = Math.max(0, totalPts + pts);
+  const now = new Date();
+  const dateStr = `${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  
+  logs.push({ text, pts, cumul: totalPts, date: dateStr });
+
+  localStorage.setItem('proto_pro_pts', totalPts);
+  localStorage.setItem('proto_pro_logs', JSON.stringify(logs));
+  updateUI();
+  drawCumulGraph();
+}
+
+// --- 📊 グラフ描画 ---
+function drawCumulGraph() {
+  const canvas = document.getElementById('cumulChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = 130;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const recentLogs = logs.slice(-10);
+  if (recentLogs.length < 2) {
+    ctx.fillStyle = "#9090a0";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("データが2件以上になるとグラフが表示されます", canvas.width / 2, 65);
+    return;
+  }
+
+  const cumulValues = recentLogs.map(l => l.cumul !== undefined ? l.cumul : l.pts);
+  const maxVal = Math.max(...cumulValues, 100);
+  const minVal = Math.min(...cumulValues, 0);
+  const padding = 25;
+  const stepX = (canvas.width - padding * 2) / (cumulValues.length - 1);
+
+  ctx.beginPath();
+  ctx.strokeStyle = "#FFB800";
+  ctx.lineWidth = 3;
+
+  cumulValues.forEach((val, i) => {
+    const x = padding + i * stepX;
+    const ratio = (val - minVal) / (maxVal - minVal || 1);
+    const y = (canvas.height - padding) - ratio * (canvas.height - padding * 2);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  cumulValues.forEach((val, i) => {
+    const x = padding + i * stepX;
+    const ratio = (val - minVal) / (maxVal - minVal || 1);
+    const y = (canvas.height - padding) - ratio * (canvas.height - padding * 2);
+
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = "#2ed573";
+    ctx.fill();
+
+    ctx.fillStyle = "#f0f0f5";
+    ctx.font = "9px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(`${val}`, x, y - 8);
+  });
+}
+
+// --- 💣 16マス(4x4) 爆弾回避ゲーム ロジック ---
+const GRID_TOTAL_CELLS = 16;
+const BOMB_COUNT = 2;
+const PER_STEP_ADD_PT = 75;
+
+let isGameActive = false;
+let currentPrizeTempPts = 0;
+let safeOpenedCount = 0;
+let bombIndices = [];
+
+function initBoardDisplay() {
+  const board = document.getElementById('grid-board');
+  board.innerHTML = '';
+  for (let i = 0; i < GRID_TOTAL_CELLS; i++) {
+    const tile = document.createElement('div');
+    tile.className = 'grid-tile';
+    tile.textContent = '❓';
+    board.appendChild(tile);
+  }
+  updateGameStats();
+}
+
+function updateGameStats() {
+  document.getElementById('stat-current-pt').textContent = `${currentPrizeTempPts} 仮PT`;
+
+  const remainingCells = GRID_TOTAL_CELLS - safeOpenedCount;
+  const remainingSafeCells = remainingCells - BOMB_COUNT;
+
+  if (!isGameActive || remainingSafeCells <= 0) {
+    document.getElementById('stat-next-add').textContent = "-";
+    document.getElementById('stat-prob').textContent = "-";
+    return;
+  }
+
+  document.getElementById('stat-next-add').textContent = `+${PER_STEP_ADD_PT} 仮PT`;
+
+  const prob = ((remainingSafeCells / remainingCells) * 100).toFixed(1);
+  document.getElementById('stat-prob').textContent = `${prob}% (${remainingSafeCells}/${remainingCells})`;
+}
+
+function startGridGame() {
+  if (isGameActive) {
+    if (!confirm("プレイ中のゲームを破棄して新しく始めますか？")) return;
+  }
+
+  if (totalPts < 100) {
+    alert("本PTが足りません！ (ゲーム挑戦には 100 本PTが必要です)");
+    return;
+  }
+
+  totalPts -= 100;
+  localStorage.setItem('proto_pro_pts', totalPts);
+
+  isGameActive = true;
+  currentPrizeTempPts = 0;
+  safeOpenedCount = 0;
+
+  bombIndices = [];
+  while (bombIndices.length < BOMB_COUNT) {
+    let r = Math.floor(Math.random() * GRID_TOTAL_CELLS);
+    if (!bombIndices.includes(r)) bombIndices.push(r);
+  }
+
+  const board = document.getElementById('grid-board');
+  board.innerHTML = '';
+  document.getElementById('grid-msg').textContent = "💣 爆弾(2個)を避けてめくれ！(セーフで仮PT獲得)";
+
+  for (let i = 0; i < GRID_TOTAL_CELLS; i++) {
+    const tile = document.createElement('div');
+    tile.className = 'grid-tile';
+    tile.textContent = '❓';
+    tile.onclick = () => pickTile(i, tile);
+    board.appendChild(tile);
+  }
+
+  updateGameStats();
+  updateUI();
+  drawCumulGraph();
+}
+
+function pickTile(index, tileEl) {
+  if (!isGameActive || tileEl.classList.contains('opened')) return;
+
+  tileEl.classList.add('opened');
+
+  if (bombIndices.includes(index)) {
+    tileEl.textContent = '💣';
+    tileEl.style.background = 'rgba(255, 71, 87, 0.3)';
+    document.getElementById('grid-msg').textContent = "💥 ドカン！爆弾を引き当てた！仮PTは没収…";
+    isGameActive = false;
+
+    const tiles = document.querySelectorAll('.grid-tile');
+    bombIndices.forEach(idx => {
+      tiles[idx].textContent = '💣';
+      tiles[idx].classList.add('opened');
+      tiles[idx].style.background = 'rgba(255, 71, 87, 0.3)';
+    });
+    updateGameStats();
+    return;
+  }
+
+  safeOpenedCount++;
+  currentPrizeTempPts += PER_STEP_ADD_PT;
+
+  tileEl.textContent = '💎';
+  tileEl.style.background = 'rgba(46, 213, 115, 0.2)';
+
+  const rand = Math.random();
+  let gotItem = null;
+  if (rand < 0.25) {
+    gotItem = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)];
+    if (!unlockedGacha.includes(gotItem.id)) {
+      unlockedGacha.push(gotItem.id);
+      localStorage.setItem('proto_gacha_col', JSON.stringify(unlockedGacha));
+    }
+  }
+
+  const maxSafeCount = GRID_TOTAL_CELLS - BOMB_COUNT;
+  if (safeOpenedCount === maxSafeCount) {
+    tempPts += currentPrizeTempPts;
+    localStorage.setItem('proto_temp_pts', tempPts);
+
+    alert(`🎉 パーフェクト！ 全セーフ達成！\n仮PT 【${currentPrizeTempPts} PT】 を獲得しました！\n（努力を行って本PTに換金してください）`);
+    addLog("💣 爆弾回避完走", 0, `仮PT +${currentPrizeTempPts}`);
+    isGameActive = false;
+    document.getElementById('grid-msg').textContent = "🏆 完全クリアおめでとう！";
+    updateGameStats();
+    updateUI();
+  } else {
+    let msg = `セーフ！ (＋${PER_STEP_ADD_PT} 仮PT)`;
+    if (gotItem) msg += ` (［${gotItem.rarity}］${gotItem.name} 獲得!)`;
+    document.getElementById('grid-msg').textContent = msg;
+
+    updateGameStats();
+
+    setTimeout(() => {
+      if (confirm(`セーフ！現在 【${currentPrizeTempPts} 仮PT】 キープ中。\nここで確定してストックしますか？\n（[キャンセル]で次のマスに挑戦）`)) {
+        tempPts += currentPrizeTempPts;
+        localStorage.setItem('proto_temp_pts', tempPts);
+
+        addLog("💣 爆弾回避利確", 0, `仮PT +${currentPrizeTempPts}`);
+        isGameActive = false;
+        document.getElementById('grid-msg').textContent = `💰 ${currentPrizeTempPts} 仮PT を獲得しました！`;
+        updateGameStats();
+        updateUI();
+      }
+    }, 100);
+  }
+}
+
+function renderCollection() {
+  const container = document.getElementById('collection-grid');
+  container.innerHTML = GACHA_ITEMS.map(item => {
+    const isUnlocked = unlockedGacha.includes(item.id);
+    return `<div class="col-item ${isUnlocked ? 'unlocked' : ''}" title="${item.name}">${isUnlocked ? item.icon : '❓'}</div>`;
+  }).join('');
+}
+
+function resetAllData() {
+  if (confirm("全データを削除しますか？")) {
+    localStorage.clear();
+    location.reload();
+  }
+}
+
+function updateUI() {
+  document.getElementById('total-pts-text').textContent = `本PT: ${totalPts}`;
+  document.getElementById('temp-pts-text').textContent = `仮PT: ${tempPts} (今日限定)`;
+  
+  updateLevelProgress();
+  renderCollection();
+
+  const logEl = document.getElementById('log-list');
+  logEl.innerHTML = logs.length === 0 ? `<div style="text-align:center;color:var(--sub);font-size:11px;padding:0.5rem;">記録なし</div>` :
+    [...logs].reverse().map(l => `
+      <div class="log-item">
+        <div><div>${l.text}</div><div style="font-size:9px;color:var(--sub);">${l.date}</div></div>
+        <div class="${l.pts >= 0 ? 'pts-plus' : 'pts-minus'}">${l.pts >= 0 ? '+' : ''}${l.pts} 本PT (累計:${l.cumul || 0})</div>
+      </div>
+    `).join('');
+}
+</script>
+</body>
+</html>
