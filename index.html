@@ -25,150 +25,116 @@
       color: var(--text);
       margin: 0 auto;
       min-height: 100vh;
-      max-width: 480px;
+      max-width: 520px;
       padding: 1rem;
       padding-bottom: 90px;
     }
 
-    /* 🔒 パスワード保護画面のスタイル */
-    #auth-screen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 80vh;
-    }
-    .auth-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2rem 1.5rem;
-      text-align: center;
-      width: 100%;
-    }
-    .auth-card input {
-      width: 100%;
-      background: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      padding: 0.8rem;
-      margin: 1rem 0;
-      text-align: center;
-      font-size: 1rem;
-    }
+    /* 🔒 パスワード画面 */
+    #auth-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; }
+    .auth-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem 1.5rem; text-align: center; width: 100%; }
+    .auth-card input { width: 100%; background: var(--muted); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 0.8rem; margin: 1rem 0; text-align: center; font-size: 1rem; }
 
     /* 📊 ステータス＆レベル表示 */
-    .status-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.2rem;
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-    .level-badge { font-size: 0.9rem; color: var(--sub); font-weight: bold; }
-    .level-val { font-size: 2.5rem; font-weight: 900; color: var(--accent); }
+    .status-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.2rem; margin-bottom: 1rem; text-align: center; }
+    .level-badge { font-size: 0.85rem; color: var(--sub); font-weight: bold; }
+    .level-val { font-size: 2.2rem; font-weight: 900; color: var(--accent); }
     .exp-bar-bg { background: var(--muted); height: 10px; border-radius: 5px; overflow: hidden; margin-top: 0.5rem; }
     .exp-bar-fill { background: var(--accent); height: 100%; width: 0%; transition: width 0.3s; }
 
-    /* ⚡ 爆速ショートカットエリア */
-    .section-title { font-size: 0.9rem; color: var(--sub); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 4px; }
-    .quick-launch {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-    }
+    /* 各カード共通 */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.2rem; margin-bottom: 1rem; }
+    .section-title { font-size: 0.9rem; color: var(--sub); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-weight: bold; }
+    
+    /* 🚀 爆速スタート & タイマー */
     .url-input-group { display: flex; gap: 6px; margin-bottom: 0.8rem; }
-    .url-input-group input {
-      flex: 1; background: var(--muted); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--text); padding: 0.6rem 0.8rem; font-size: 0.85rem;
-    }
-    .launch-btn {
-      width: 100%; background: var(--accent); color: #000; font-weight: bold;
-      padding: 0.8rem; border-radius: 12px; border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 1rem;
-    }
-
-    /* ⏱ ポモドーロタイマー */
-    .timer-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.2rem;
-      text-align: center;
-    }
-    .timer-display { font-size: 3.5rem; font-weight: 800; font-family: monospace; color: var(--text); margin: 0.5rem 0; }
+    .url-input-group input { flex: 1; background: var(--muted); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 0.6rem 0.8rem; font-size: 0.85rem; }
+    .launch-btn { width: 100%; background: var(--accent); color: #000; font-weight: bold; padding: 0.8rem; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.95rem; }
+    .timer-display { font-size: 3rem; font-weight: 800; font-family: monospace; text-align: center; margin: 0.5rem 0; }
     .timer-controls { display: flex; gap: 8px; justify-content: center; }
-    .btn { padding: 0.6rem 1.2rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
-    .btn-start { background: var(--green); color: #000; }
-    .btn-stop { background: var(--muted); color: var(--text); }
+    
+    /* ⚔️ クエスト・努力記録機能 */
+    .quest-input { display: flex; gap: 8px; margin-bottom: 0.8rem; }
+    .quest-input input { flex: 1; background: var(--muted); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 0.6rem; font-size: 0.85rem; }
+    .quest-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .quest-item { background: var(--muted); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem; display: flex; justify-content: space-between; align-items: center; }
+    .quest-item.completed { opacity: 0.5; text-decoration: line-through; }
+    
+    /* 📜 努力ログ */
+    .log-list { list-style: none; max-height: 150px; overflow-y: auto; font-size: 0.85rem; color: var(--sub); }
+    .log-item { padding: 0.4rem 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+
+    /* 🔘 ボタン類 */
+    .btn { padding: 0.5rem 1rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+    .btn-green { background: var(--green); color: #000; }
+    .btn-muted { background: var(--muted); color: var(--text); }
+    .btn-red { background: var(--red); color: #fff; }
 
     /* 💬 右下固定フィードバックボタン */
-    #feedback-btn {
-      position: fixed; bottom: 20px; right: 20px; background: var(--card);
-      color: var(--text); border: 1px solid var(--border); padding: 10px 16px;
-      border-radius: 20px; cursor: pointer; z-index: 999; font-weight: bold;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    }
-    #feedback-modal {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;
-    }
-    .modal-content {
-      background: var(--card); padding: 1.5rem; border-radius: 16px;
-      max-width: 360px; width: 100%; text-align: center; border: 1px solid var(--border);
-    }
+    #feedback-btn { position: fixed; bottom: 20px; right: 20px; background: var(--card); color: var(--text); border: 1px solid var(--border); padding: 10px 16px; border-radius: 20px; cursor: pointer; z-index: 999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+    #feedback-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; padding: 1rem; }
+    .modal-content { background: var(--card); padding: 1.5rem; border-radius: 16px; max-width: 360px; width: 100%; text-align: center; border: 1px solid var(--border); }
   </style>
 </head>
 <body>
 
-  <!-- 🔒 パスワード保護認証画面 -->
+  <!-- 🔒 パスワード保護画面 -->
   <div id="auth-screen">
     <div class="auth-card">
       <h2 style="margin-bottom:0.5rem;">🔒 Passcode Required</h2>
-      <p style="color:var(--sub); font-size:0.85rem;">パスコードを入力してログインしてください</p>
-      <input type="password" id="passcode-input" placeholder="パスコードを入力">
-      <button class="launch-btn" onclick="checkPasscode()">認証する</button>
+      <p style="color:var(--sub); font-size:0.85rem;">パスコードを入力してください</p>
+      <input type="password" id="passcode-input" placeholder="1234">
+      <button class="launch-btn" onclick="checkPasscode()">ログイン</button>
       <p id="auth-error" style="color:var(--red); font-size:0.8rem; margin-top:0.8rem; display:none;">パスコードが違います</p>
     </div>
   </div>
 
-  <!-- 🎮 メインアプリ画面（認証完了後に表示） -->
+  <!-- 🎮 メインアプリ画面 -->
   <main id="app-content" style="display: none;">
-    <!-- 📊 レベル＆経験値表示 -->
+    
+    <!-- 📊 ステータス＆レベル -->
     <div class="status-card">
       <div class="level-badge">QUEST LEVEL</div>
       <div class="level-val" id="level-display">Lv.1</div>
-      <div class="exp-bar-bg">
-        <div class="exp-bar-fill" id="exp-fill"></div>
-      </div>
+      <div class="exp-bar-bg"><div class="exp-bar-fill" id="exp-fill"></div></div>
       <div style="font-size: 0.75rem; color: var(--sub); margin-top: 0.4rem;" id="exp-text">0 / 100 EXP</div>
     </div>
 
-    <!-- 🚀 爆速スタート（Webを開く＋タイマー同期） -->
-    <div class="section-title"><i class="ti ti-rocket"></i> 即スタートショートカット</div>
-    <div class="quick-launch">
+    <!-- 🚀 爆速Web起動 & ポモドーロタイマー -->
+    <div class="card">
+      <div class="section-title"><i class="ti ti-rocket"></i> 即スタートショートカット</div>
       <div class="url-input-group">
-        <input type="url" id="target-url" placeholder="教材/WebサイトのURL (https://...)" value="https://">
+        <input type="url" id="target-url" placeholder="教材/WebのURL (https://...)" value="https://">
       </div>
-      <button class="launch-btn" onclick="launchAndStart()">
+      <button class="launch-btn" onclick="launchAndStart()" style="margin-bottom: 1rem;">
         <i class="ti ti-external-link"></i> Webを開いてタイマー開始
       </button>
-    </div>
 
-    <!-- ⏱ ポモドーロタイマー -->
-    <div class="timer-card">
       <div class="section-title" style="justify-content: center;"><i class="ti ti-clock"></i> ポモドーロタイマー (25分)</div>
       <div class="timer-display" id="timer">25:00</div>
       <div class="timer-controls">
-        <button class="btn btn-start" onclick="startTimer()">開始</button>
-        <button class="btn btn-stop" onclick="pauseTimer()">一時停止</button>
-        <button class="btn btn-stop" onclick="resetTimer()">リセット</button>
+        <button class="btn btn-green" onclick="startTimer()">開始</button>
+        <button class="btn btn-muted" onclick="pauseTimer()">停止</button>
+        <button class="btn btn-muted" onclick="resetTimer()">リセット</button>
       </div>
     </div>
+
+    <!-- ⚔️ クエスト（タスク）管理機能 -->
+    <div class="card">
+      <div class="section-title"><i class="ti ti-sword"></i> 今日のクエスト（タスク）</div>
+      <div class="quest-input">
+        <input type="text" id="quest-text" placeholder="例: 英単語50個 / 英文法1章">
+        <button class="btn btn-green" onclick="addQuest()">追加</button>
+      </div>
+      <ul class="quest-list" id="quest-list"></ul>
+    </div>
+
+    <!-- 📜 努力の実行ログ（履歴） -->
+    <div class="card">
+      <div class="section-title"><i class="ti ti-history"></i> 努力の記録（ログ）</div>
+      <ul class="log-list" id="log-list"></ul>
+    </div>
+
   </main>
 
   <!-- 💬 フィードバックボタン＆モーダル -->
@@ -177,8 +143,8 @@
   <div id="feedback-modal">
     <div class="modal-content">
       <h3 style="margin-bottom:0.5rem;">フィードバック</h3>
-      <p style="color:var(--sub); font-size:0.85rem; margin-bottom:1.2rem;">ご意見や要望をお寄せください。</p>
-      <!-- ⚠️ 「ここにGoogleフォームのURL」をご自身のフォームURLに書き換えてください -->
+      <p style="color:var(--sub); font-size:0.85rem; margin-bottom:1.2rem;">ご意見やバグ報告はこちらから送信できます。</p>
+      <!-- ⚠️ 「ここにGoogleフォームのURL」を実際のURLに差し替えてください -->
       <a href="ここにGoogleフォームのURL" target="_blank" rel="noopener noreferrer" 
          style="display:block; background:var(--accent); color:#000; padding:0.8rem; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:1rem;">
         Googleフォームを開く ↗
@@ -188,7 +154,7 @@
   </div>
 
   <script>
-    // --- 🔒 パスワード設定（必要に応じて変更してください） ---
+    // 🔒 パスコード設定
     const CORRECT_PASSCODE = "1234";
 
     function checkPasscode() {
@@ -196,15 +162,23 @@
       if (input === CORRECT_PASSCODE) {
         document.getElementById('auth-screen').style.display = 'none';
         document.getElementById('app-content').style.display = 'block';
-        updateStatus();
+        initApp();
       } else {
         document.getElementById('auth-error').style.display = 'block';
       }
     }
 
-    // --- 🎮 レベル＆経験値システム ---
+    // 🎮 データ＆レベル管理
     let exp = parseInt(localStorage.getItem('user_exp') || '0');
-    
+    let quests = JSON.parse(localStorage.getItem('user_quests') || '[]');
+    let logs = JSON.parse(localStorage.getItem('user_logs') || '[]');
+
+    function initApp() {
+      updateStatus();
+      renderQuests();
+      renderLogs();
+    }
+
     function updateStatus() {
       const level = Math.floor(exp / 100) + 1;
       const currentExp = exp % 100;
@@ -214,13 +188,19 @@
       localStorage.setItem('user_exp', exp);
     }
 
-    function addExp(amount) {
+    function addExp(amount, reason) {
       exp += amount;
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      logs.unshift({ text: `${reason} (+${amount} EXP)`, time: timeStr });
+      if(logs.length > 20) logs.pop();
+      localStorage.setItem('user_logs', JSON.stringify(logs));
+      
       updateStatus();
+      renderLogs();
       alert(`🎉 努力完了！ +${amount} EXP 獲得！`);
     }
 
-    // --- ⏱ タイマー機能 ---
+    // ⏱ タイマー機能
     let timeLeft = 25 * 60;
     let timerId = null;
 
@@ -238,33 +218,74 @@
         if (timeLeft <= 0) {
           clearInterval(timerId);
           timerId = null;
-          addExp(50); // 25分完走で 50 EXP 獲得
+          addExp(50, "25分タイマー達成");
           resetTimer();
         }
       }, 1000);
     }
 
-    function pauseTimer() {
-      clearInterval(timerId);
-      timerId = null;
-    }
+    function pauseTimer() { clearInterval(timerId); timerId = null; }
+    function resetTimer() { pauseTimer(); timeLeft = 25 * 60; updateTimerDisplay(); }
 
-    function resetTimer() {
-      pauseTimer();
-      timeLeft = 25 * 60;
-      updateTimerDisplay();
-    }
-
-    // --- 🚀 爆速Web起動 & タイマー連動 ---
     function launchAndStart() {
       const url = document.getElementById('target-url').value;
-      if (url && url !== 'https://') {
-        window.open(url, '_blank');
-      }
+      if (url && url !== 'https://') window.open(url, '_blank');
       startTimer();
     }
 
-    // --- 💬 フィードバックモーダル ---
+    // ⚔️ クエスト機能
+    function addQuest() {
+      const text = document.getElementById('quest-text').value.trim();
+      if (!text) return;
+      quests.push({ id: Date.now(), text: text, done: false });
+      document.getElementById('quest-text').value = '';
+      saveQuests();
+    }
+
+    function toggleQuest(id) {
+      quests = quests.map(q => {
+        if (q.id === id) {
+          if (!q.done) addExp(30, `クエスト達成: ${q.text}`);
+          return { ...q, done: !q.done };
+        }
+        return q;
+      });
+      saveQuests();
+    }
+
+    function deleteQuest(id) {
+      quests = quests.filter(q => q.id !== id);
+      saveQuests();
+    }
+
+    function saveQuests() {
+      localStorage.setItem('user_quests', JSON.stringify(quests));
+      renderQuests();
+    }
+
+    function renderQuests() {
+      const list = document.getElementById('quest-list');
+      list.innerHTML = quests.map(q => `
+        <li class="quest-item ${q.done ? 'completed' : ''}">
+          <span onclick="toggleQuest(${q.id})" style="cursor:pointer; flex:1;">
+            ${q.done ? '✅' : '⬜'} ${q.text}
+          </span>
+          <button class="btn btn-red" style="padding:0.2rem 0.5rem;" onclick="deleteQuest(${q.id})">削除</button>
+        </li>
+      `).join('');
+    }
+
+    function renderLogs() {
+      const list = document.getElementById('log-list');
+      list.innerHTML = logs.map(l => `
+        <li class="log-item">
+          <span>${l.text}</span>
+          <span>${l.time}</span>
+        </li>
+      `).join('');
+    }
+
+    // 💬 フィードバック
     function openFeedback() { document.getElementById('feedback-modal').style.display = 'flex'; }
     function closeFeedback() { document.getElementById('feedback-modal').style.display = 'none'; }
   </script>
