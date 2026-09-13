@@ -25,9 +25,9 @@
       color: var(--text);
       margin: 0 auto;
       min-height: 100vh;
-      max-width: 500px;
+      max-width: 480px;
       padding: 1rem;
-      padding-bottom: 80px; /* 右下ボタンとの被り防止 */
+      padding-bottom: 90px;
     }
 
     /* 🔒 パスワード保護画面のスタイル */
@@ -46,84 +46,227 @@
       text-align: center;
       width: 100%;
     }
-
-    /* 💬 フィードバック用スタイル */
-    #feedback-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--card);
-      color: var(--text);
+    .auth-card input {
+      width: 100%;
+      background: var(--muted);
       border: 1px solid var(--border);
-      padding: 10px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      z-index: 999;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      border-radius: 8px;
+      color: var(--text);
+      padding: 0.8rem;
+      margin: 1rem 0;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    /* 📊 ステータス＆レベル表示 */
+    .status-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .level-badge { font-size: 0.9rem; color: var(--sub); font-weight: bold; }
+    .level-val { font-size: 2.5rem; font-weight: 900; color: var(--accent); }
+    .exp-bar-bg { background: var(--muted); height: 10px; border-radius: 5px; overflow: hidden; margin-top: 0.5rem; }
+    .exp-bar-fill { background: var(--accent); height: 100%; width: 0%; transition: width 0.3s; }
+
+    /* ⚡ 爆速ショートカットエリア */
+    .section-title { font-size: 0.9rem; color: var(--sub); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 4px; }
+    .quick-launch {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .url-input-group { display: flex; gap: 6px; margin-bottom: 0.8rem; }
+    .url-input-group input {
+      flex: 1; background: var(--muted); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 0.6rem 0.8rem; font-size: 0.85rem;
+    }
+    .launch-btn {
+      width: 100%; background: var(--accent); color: #000; font-weight: bold;
+      padding: 0.8rem; border-radius: 12px; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 1rem;
+    }
+
+    /* ⏱ ポモドーロタイマー */
+    .timer-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+    .timer-display { font-size: 3.5rem; font-weight: 800; font-family: monospace; color: var(--text); margin: 0.5rem 0; }
+    .timer-controls { display: flex; gap: 8px; justify-content: center; }
+    .btn { padding: 0.6rem 1.2rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+    .btn-start { background: var(--green); color: #000; }
+    .btn-stop { background: var(--muted); color: var(--text); }
+
+    /* 💬 右下固定フィードバックボタン */
+    #feedback-btn {
+      position: fixed; bottom: 20px; right: 20px; background: var(--card);
+      color: var(--text); border: 1px solid var(--border); padding: 10px 16px;
+      border-radius: 20px; cursor: pointer; z-index: 999; font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
     #feedback-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;
     }
     .modal-content {
-      background: var(--card);
-      padding: 2rem;
-      border-radius: 16px;
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-      border: 1px solid var(--border);
+      background: var(--card); padding: 1.5rem; border-radius: 16px;
+      max-width: 360px; width: 100%; text-align: center; border: 1px solid var(--border);
     }
   </style>
 </head>
 <body>
 
-  <!-- メインコンテンツエリア -->
-  <main id="app-content">
-    <!-- ここにアプリのメイン画面が配置されます -->
+  <!-- 🔒 パスワード保護認証画面 -->
+  <div id="auth-screen">
+    <div class="auth-card">
+      <h2 style="margin-bottom:0.5rem;">🔒 Passcode Required</h2>
+      <p style="color:var(--sub); font-size:0.85rem;">パスコードを入力してログインしてください</p>
+      <input type="password" id="passcode-input" placeholder="パスコードを入力">
+      <button class="launch-btn" onclick="checkPasscode()">認証する</button>
+      <p id="auth-error" style="color:var(--red); font-size:0.8rem; margin-top:0.8rem; display:none;">パスコードが違います</p>
+    </div>
+  </div>
+
+  <!-- 🎮 メインアプリ画面（認証完了後に表示） -->
+  <main id="app-content" style="display: none;">
+    <!-- 📊 レベル＆経験値表示 -->
+    <div class="status-card">
+      <div class="level-badge">QUEST LEVEL</div>
+      <div class="level-val" id="level-display">Lv.1</div>
+      <div class="exp-bar-bg">
+        <div class="exp-bar-fill" id="exp-fill"></div>
+      </div>
+      <div style="font-size: 0.75rem; color: var(--sub); margin-top: 0.4rem;" id="exp-text">0 / 100 EXP</div>
+    </div>
+
+    <!-- 🚀 爆速スタート（Webを開く＋タイマー同期） -->
+    <div class="section-title"><i class="ti ti-rocket"></i> 即スタートショートカット</div>
+    <div class="quick-launch">
+      <div class="url-input-group">
+        <input type="url" id="target-url" placeholder="教材/WebサイトのURL (https://...)" value="https://">
+      </div>
+      <button class="launch-btn" onclick="launchAndStart()">
+        <i class="ti ti-external-link"></i> Webを開いてタイマー開始
+      </button>
+    </div>
+
+    <!-- ⏱ ポモドーロタイマー -->
+    <div class="timer-card">
+      <div class="section-title" style="justify-content: center;"><i class="ti ti-clock"></i> ポモドーロタイマー (25分)</div>
+      <div class="timer-display" id="timer">25:00</div>
+      <div class="timer-controls">
+        <button class="btn btn-start" onclick="startTimer()">開始</button>
+        <button class="btn btn-stop" onclick="pauseTimer()">一時停止</button>
+        <button class="btn btn-stop" onclick="resetTimer()">リセット</button>
+      </div>
+    </div>
   </main>
 
-  <!-- 💬 右下固定フィードバックボタン -->
-  <button id="feedback-btn" onclick="openFeedback()">💬 フィードバック</button>
+  <!-- 💬 フィードバックボタン＆モーダル -->
+  <button id="feedback-btn" onclick="openFeedback()">💬 意見を送る</button>
 
-  <!-- 💬 フィードバックモーダル（ポップアップ） -->
   <div id="feedback-modal">
     <div class="modal-content">
-      <h3 style="color:var(--text); margin-bottom:0.5rem;">フィードバックを送る</h3>
-      <p style="color:var(--sub); font-size:0.85rem; margin-bottom:1.5rem;">ご意見やバグ報告は以下のフォームよりお願いいたします。</p>
-      
-      <!-- ⚠️ 「ここにGoogleフォームのURL」を実際のURLに差し替えてください -->
+      <h3 style="margin-bottom:0.5rem;">フィードバック</h3>
+      <p style="color:var(--sub); font-size:0.85rem; margin-bottom:1.2rem;">ご意見や要望をお寄せください。</p>
+      <!-- ⚠️ 「ここにGoogleフォームのURL」をご自身のフォームURLに書き換えてください -->
       <a href="ここにGoogleフォームのURL" target="_blank" rel="noopener noreferrer" 
-         style="display:inline-block; background:var(--accent); color:#000; padding:0.8rem 1.5rem; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:1rem; width:100%; box-sizing:border-box;">
+         style="display:block; background:var(--accent); color:#000; padding:0.8rem; border-radius:8px; text-decoration:none; font-weight:bold; margin-bottom:1rem;">
         Googleフォームを開く ↗
       </a>
-      
-      <br>
-      <button onclick="closeFeedback()" style="background:none; border:none; color:var(--sub); cursor:pointer; margin-top:0.5rem; font-size:0.9rem;">閉じる</button>
+      <button onclick="closeFeedback()" style="background:none; border:none; color:var(--sub); cursor:pointer;">閉じる</button>
     </div>
   </div>
 
   <script>
-    // 💬 フィードバックモーダルの開閉処理
-    function openFeedback() {
-      document.getElementById('feedback-modal').style.display = 'flex';
+    // --- 🔒 パスワード設定（必要に応じて変更してください） ---
+    const CORRECT_PASSCODE = "1234";
+
+    function checkPasscode() {
+      const input = document.getElementById('passcode-input').value;
+      if (input === CORRECT_PASSCODE) {
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('app-content').style.display = 'block';
+        updateStatus();
+      } else {
+        document.getElementById('auth-error').style.display = 'block';
+      }
     }
-    function closeFeedback() {
-      document.getElementById('feedback-modal').style.display = 'none';
+
+    // --- 🎮 レベル＆経験値システム ---
+    let exp = parseInt(localStorage.getItem('user_exp') || '0');
+    
+    function updateStatus() {
+      const level = Math.floor(exp / 100) + 1;
+      const currentExp = exp % 100;
+      document.getElementById('level-display').innerText = `Lv.${level}`;
+      document.getElementById('exp-fill').style.width = `${currentExp}%`;
+      document.getElementById('exp-text').innerText = `${currentExp} / 100 EXP (累計: ${exp} EXP)`;
+      localStorage.setItem('user_exp', exp);
     }
+
+    function addExp(amount) {
+      exp += amount;
+      updateStatus();
+      alert(`🎉 努力完了！ +${amount} EXP 獲得！`);
+    }
+
+    // --- ⏱ タイマー機能 ---
+    let timeLeft = 25 * 60;
+    let timerId = null;
+
+    function updateTimerDisplay() {
+      const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+      const s = (timeLeft % 60).toString().padStart(2, '0');
+      document.getElementById('timer').innerText = `${m}:${s}`;
+    }
+
+    function startTimer() {
+      if (timerId !== null) return;
+      timerId = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          timerId = null;
+          addExp(50); // 25分完走で 50 EXP 獲得
+          resetTimer();
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(timerId);
+      timerId = null;
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      timeLeft = 25 * 60;
+      updateTimerDisplay();
+    }
+
+    // --- 🚀 爆速Web起動 & タイマー連動 ---
+    function launchAndStart() {
+      const url = document.getElementById('target-url').value;
+      if (url && url !== 'https://') {
+        window.open(url, '_blank');
+      }
+      startTimer();
+    }
+
+    // --- 💬 フィードバックモーダル ---
+    function openFeedback() { document.getElementById('feedback-modal').style.display = 'flex'; }
+    function closeFeedback() { document.getElementById('feedback-modal').style.display = 'none'; }
   </script>
 </body>
 </html>
