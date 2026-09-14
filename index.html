@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>努力計測クエスト Ultimate Level Up</title>
+<title>努力計測システム Ultimate</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 :root {
@@ -21,12 +21,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 }
 .flash-red { animation: flashRed 0.6s ease-out; }
 
-.header { text-align: center; margin-bottom: 1rem; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.feedback-btn { font-size: 11px; color: var(--accent); border: 1px solid var(--accent); padding: 4px 10px; border-radius: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: background 0.2s; }
+.feedback-btn:hover { background: rgba(255,184,0,0.1); }
+
 .chara-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; text-align: center; position: relative; }
 .chara-avatar { font-size: 56px; margin: 0.25rem 0; }
 .level-badge { display: inline-block; background: var(--accent); color: #000; font-weight: bold; font-size: 11px; padding: 3px 12px; border-radius: 12px; }
 
-/* 🌟 PT表示エリア */
+/* 🌟 PT/EXP表示エリア */
 .pt-display-group { display: flex; justify-content: center; gap: 12px; margin-top: 8px; }
 .pt-badge { background: var(--muted); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: bold; }
 .pt-badge.temp { border-color: var(--blue); color: var(--blue); }
@@ -41,11 +44,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 
 /* ⏱️ タイマー＆入力 */
 .input-group { display: flex; gap: 8px; margin-bottom: 8px; }
-input[type="text"] { flex: 1; background: var(--muted); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 10px; font-size: 13px; outline: none; }
-input[type="text"]:focus { border-color: var(--accent); }
-
-select { background: var(--muted); border: 1px solid var(--border); color: var(--text); padding: 0 8px; border-radius: 10px; font-size: 12px; outline: none; cursor: pointer; }
-select:focus { border-color: var(--accent); }
+input[type="text"], input[type="number"] { background: var(--muted); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 10px; font-size: 13px; outline: none; }
+input[type="text"] { flex: 1; }
+input[type="number"] { width: 90px; text-align: center; }
+input:focus { border-color: var(--accent); }
 
 .btn-eval { background: var(--accent); color: #000; font-weight: bold; border: none; padding: 0 16px; border-radius: 10px; cursor: pointer; white-space: nowrap; }
 
@@ -54,24 +56,23 @@ select:focus { border-color: var(--accent); }
 .btn-timer { background: var(--muted); border: 1px solid var(--border); color: var(--text); padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; }
 .btn-timer.primary { background: var(--accent); color: #000; border: none; }
 
-/* 💣 4x4 16マスゲーム */
-.grid-game { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
-.grid-tile { background: var(--muted); border: 2px solid var(--border); border-radius: 10px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.1s, background 0.2s; }
-.grid-tile:active { transform: scale(0.95); }
-.grid-tile.opened { cursor: default; }
-
-.game-status-board { background: var(--muted); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-top: 10px; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
-.game-status-row { display: flex; justify-content: space-between; align-items: center; }
-.val-highlight { font-weight: bold; color: var(--accent); }
-.val-green { font-weight: bold; color: var(--green); }
-
-.collection-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 10px; }
-.col-item { background: var(--muted); border: 1px solid var(--border); border-radius: 8px; text-align: center; padding: 6px 0; font-size: 20px; opacity: 0.2; }
-.col-item.unlocked { opacity: 1; border-color: var(--accent); }
-
 .chip-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
 .chip { background: var(--muted); border: 1px solid var(--border); color: var(--text); font-size: 11px; padding: 6px 12px; border-radius: 16px; cursor: pointer; }
+.chip.btn-time { border-color: var(--sub); color: var(--accent); }
 .chip:active { background: var(--border); }
+
+/* 💡 評価基準ガイド & リアルタイム計算表示 */
+.eval-guide { background: var(--muted); border-radius: 8px; padding: 8px 12px; font-size: 11px; color: var(--sub); margin-bottom: 10px; border-left: 3px solid var(--accent); }
+.calc-preview { font-size: 12px; font-weight: bold; color: var(--accent); margin-bottom: 8px; text-align: right; }
+
+/* 🏆 アチーブメント (実績) */
+.achievement-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.achieve-card { background: var(--muted); border: 1px solid var(--border); border-radius: 10px; padding: 8px; display: flex; align-items: center; gap: 8px; opacity: 0.3; filter: grayscale(100%); transition: 0.3s; }
+.achieve-card.unlocked { opacity: 1; filter: grayscale(0%); border-color: var(--accent); }
+.achieve-icon { font-size: 24px; }
+.achieve-info { display: flex; flex-direction: column; }
+.achieve-title { font-size: 11px; font-weight: bold; color: var(--text); }
+.achieve-desc { font-size: 9px; color: var(--sub); }
 
 /* グラフ */
 .graph-container { width: 100%; height: 130px; margin-top: 8px; }
@@ -95,17 +96,21 @@ canvas { width: 100%; height: 100%; }
 <body>
 
 <div class="header">
-  <h2 style="font-size: 18px;">🔥 努力計測クエスト Level Up</h2>
+  <h2 style="font-size: 18px;">🔥 努力計測システム</h2>
+  <!-- 💡 Googleフォーム等のURLを以下に設定してください -->
+  <a href="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform" target="_blank" class="feedback-btn">
+    <i class="ti ti-message-dots"></i> ご意見・要望
+  </a>
 </div>
 
-<!-- キャラクター & PT / レベル進捗 -->
+<!-- キャラクター & EXP / レベル進捗 -->
 <div class="chara-card">
   <div class="level-badge" id="lvl-badge">Lv.1 見習い</div>
   <div class="chara-avatar" id="chara-icon">🥚</div>
   
   <div class="pt-display-group">
-    <div class="pt-badge" id="total-pts-text">本PT: 0</div>
-    <div class="pt-badge temp" id="temp-pts-text" title="本日中に努力すると2:1で本PTへ変換">仮PT: 0 (今日限定)</div>
+    <div class="pt-badge" id="total-pts-text">確定EXP: 0</div>
+    <div class="pt-badge temp" id="temp-pts-text" title="努力記録時に同時にEXPに変換されます">ストックエナジー: 0</div>
   </div>
   
   <!-- 進捗ゲージ -->
@@ -114,17 +119,17 @@ canvas { width: 100%; height: 100%; }
       <div class="level-progress-fill" id="lvl-progress-fill"></div>
     </div>
     <div class="level-progress-text">
-      <span id="lvl-curr-pt">0 PT</span>
-      <span id="lvl-next-text">次まで: 100 PT</span>
+      <span id="lvl-curr-pt">0 EXP</span>
+      <span id="lvl-next-text">次まで: 100 EXP</span>
     </div>
   </div>
 </div>
 
 <!-- ⏱️ 集中タイマー記録 -->
 <div class="card">
-  <div class="card-title"><span><i class="ti ti-timer"></i> 集中タイマーで努力記録</span></div>
+  <div class="card-title"><span><i class="ti ti-timer"></i> 集中タイマーで記録</span></div>
   <div class="input-group">
-    <input type="text" id="timer-task-input" placeholder="何をする？ (例: 数学、読書)" maxlength="30">
+    <input type="text" id="timer-task-input" placeholder="タスク名 (例: 数学、読書)" maxlength="30">
   </div>
   <div class="chip-container">
     <div class="chip" onclick="setTimerTask('数学')">✏️ 数学</div>
@@ -139,10 +144,18 @@ canvas { width: 100%; height: 100%; }
   </div>
 </div>
 
-<!-- ✍️ 手動判定・記録 -->
+<!-- ✍️ 手動判定・記録 (1分単位) -->
 <div class="card">
-  <div class="card-title"><span><i class="ti ti-pencil"></i> 手動入力で判定・換金</span></div>
+  <div class="card-title"><span><i class="ti ti-pencil"></i> 1分単位で手動記録</span></div>
   
+  <!-- 評価ルール明示 -->
+  <div class="eval-guide">
+    <strong>💡 評価ルール:</strong><br>
+    ・努力時間 <strong>1分 ＝ 1 EXP</strong> 獲得<br>
+    ・ストックエナジー保有時は消費してEXPをさらに獲得<br>
+    ・「サボった」「寝坊」などの否定・言い訳入力は減点 (-50 EXP)
+  </div>
+
   <div class="chip-container">
     <div class="chip" onclick="appendManualTask('数学')">✏️ 数学</div>
     <div class="chip" onclick="appendManualTask('英語')">📖 英語</div>
@@ -152,63 +165,43 @@ canvas { width: 100%; height: 100%; }
   </div>
 
   <div class="input-group">
-    <input type="text" id="effort-input" placeholder="例: 数学 2時間" maxlength="50">
-    
-    <select id="time-select" onchange="applyTimeSelect()">
-      <option value="">時間選択</option>
-      <option value="15分">15分</option>
-      <option value="30分">30分</option>
-      <option value="1時間">1時間</option>
-      <option value="1.5時間">1.5時間</option>
-      <option value="2時間">2時間</option>
-      <option value="3時間">3時間</option>
-      <option value="5時間">5時間</option>
-    </select>
-
-    <button class="btn-eval" onclick="evaluateEffort()">判定</button>
+    <input type="text" id="effort-task" placeholder="内容 (例: 数学演習)" maxlength="40">
+    <input type="number" id="manual-minutes" placeholder="分" min="1" max="1440" value="30" oninput="updatePreview()">
+    <button class="btn-eval" onclick="evaluateEffort()">記録</button>
   </div>
 
+  <!-- 分単位調整クイックボタン -->
+  <div class="chip-container">
+    <div class="chip btn-time" onclick="addMinutes(1)">+1分</div>
+    <div class="chip btn-time" onclick="addMinutes(5)">+5分</div>
+    <div class="chip btn-time" onclick="addMinutes(15)">+15分</div>
+    <div class="chip btn-time" onclick="addMinutes(30)">+30分</div>
+    <div class="chip btn-time" onclick="addMinutes(60)">+60分</div>
+  </div>
+
+  <!-- 💡 リアルタイム見込み計算 -->
+  <div class="calc-preview" id="calc-preview">獲得予定: 30 EXP (30分)</div>
+
   <div class="result-box" id="result-box">
-    <div class="res-pts" id="res-pts">+0 PT</div>
+    <div class="res-pts" id="res-pts">+0 EXP</div>
     <div class="res-reason" id="res-reason">判定結果</div>
   </div>
 </div>
 
-<!-- 📊 過去10回の累計PT推移グラフ -->
+<!-- 🏆 アチーブメント (ゲーム代替要素) -->
 <div class="card">
-  <div class="card-title"><span><i class="ti ti-chart-line"></i> 本PT推移（過去10回）</span></div>
-  <div class="graph-container">
-    <canvas id="cumulChart"></canvas>
+  <div class="card-title"><span><i class="ti ti-trophy"></i> 実績・アチーブメント</span></div>
+  <div class="achievement-grid" id="achievement-grid">
+    <!-- JSで動的生成 -->
   </div>
 </div>
 
-<!-- 💣 16マス(4x4) 爆弾回避ミニゲーム -->
+<!-- 📊 EXP推移グラフ -->
 <div class="card">
-  <div class="card-title">
-    <span><i class="ti ti-bomb"></i> 4×4 爆弾回避（参加費 100 本PT）</span>
-    <button class="btn-timer" onclick="startGridGame()" style="padding: 2px 8px;" id="game-start-btn">挑戦スタート</button>
+  <div class="card-title"><span><i class="ti ti-chart-line"></i> 確定EXP推移（直近10回）</span></div>
+  <div class="graph-container">
+    <canvas id="cumulChart"></canvas>
   </div>
-  <div style="font-size: 11px; color: var(--sub);" id="grid-msg">「挑戦スタート」を押してゲーム開始！</div>
-  
-  <div class="game-status-board">
-    <div class="game-status-row">
-      <span>ストック中の仮PT:</span>
-      <span class="val-green" id="stat-current-pt">0 仮PT</span>
-    </div>
-    <div class="game-status-row">
-      <span>次当てたら増える仮PT:</span>
-      <span class="val-highlight" id="stat-next-add">+75 仮PT</span>
-    </div>
-    <div class="game-status-row">
-      <span>次成功する正確な確率:</span>
-      <span class="val-highlight" id="stat-prob">87.5% (14/16)</span>
-    </div>
-  </div>
-
-  <div class="grid-game" id="grid-board"></div>
-  
-  <div style="margin-top: 12px; font-size: 11px; color: var(--sub);">コレクション</div>
-  <div class="collection-grid" id="collection-grid"></div>
 </div>
 
 <!-- ログ & リセット -->
@@ -220,22 +213,28 @@ canvas { width: 100%; height: 100%; }
   <div id="log-list"></div>
 </div>
 
+<div style="text-align: center; margin-top: 1.5rem; margin-bottom: 1rem;">
+  <a href="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform" target="_blank" class="feedback-btn" style="padding: 6px 16px;">
+    💡 システム改善のご意見（Googleフォーム）
+  </a>
+</div>
+
 <script>
-let totalPts = Math.max(0, Number(localStorage.getItem('proto_pro_pts')) || 0);
-let tempPts = Math.max(0, Number(localStorage.getItem('proto_temp_pts')) || 0);
+let totalExp = Math.max(0, Number(localStorage.getItem('proto_pro_exp')) || 0);
+let stockEnergy = Math.max(0, Number(localStorage.getItem('proto_stock_energy')) || 0);
 let lastDate = localStorage.getItem('proto_last_date') || "";
 
 let logs = JSON.parse(localStorage.getItem('proto_pro_logs')) || [];
-let unlockedGacha = JSON.parse(localStorage.getItem('proto_gacha_col')) || [];
+let unlockedAchievements = JSON.parse(localStorage.getItem('proto_achievements')) || [];
 
-// 📅 日付チェック（1日経過で仮PT失効）
+// 📅 日付チェック（1日経過でストックエナジー失効）
 function checkDailyReset() {
   const today = new Date().toISOString().split('T')[0];
   if (lastDate && lastDate !== today) {
-    if (tempPts > 0) {
-      alert(`⚠️ 日付が変わったため、未換金の仮PT (${tempPts} PT) は失効しました。`);
-      tempPts = 0;
-      localStorage.setItem('proto_temp_pts', 0);
+    if (stockEnergy > 0) {
+      alert(`⚠️ 日付が変わったため、未還元のストックエナジー (${stockEnergy} エナジー) は失効しました。`);
+      stockEnergy = 0;
+      localStorage.setItem('proto_stock_energy', 0);
     }
   }
   lastDate = today;
@@ -251,13 +250,13 @@ const LEVEL_TABLE = [
   { pt: 2000, lvl: 6, title: "Lv.6 伝説の努力家", icon: "👑" }
 ];
 
-const GACHA_ITEMS = [
-  { id: 0, icon: "👾", name: "ドットスライム", rarity: "C" },
-  { id: 1, icon: "🤖", name: "ロボット", rarity: "C" },
-  { id: 2, icon: "👽", name: "エイリアン", rarity: "R" },
-  { id: 3, icon: "🧙‍♂️", name: "魔法使い", rarity: "R" },
-  { id: 4, icon: "🦿", name: "サイボーグ", rarity: "SR" },
-  { id: 5, icon: "🦄", name: "伝説の勇者", rarity: "UR" }
+const ACHIEVEMENTS = [
+  { id: 'first_step', title: '初めの一歩', desc: '初めて努力を記録した', icon: '🌱' },
+  { id: 'timer_master', title: '集中モード', desc: 'タイマーを使って記録した', icon: '⏱️' },
+  { id: 'exp_100', title: '百錬成鋼', desc: '累計 100 EXP 達成', icon: '⚡' },
+  { id: 'exp_500', title: '努力の領域', desc: '累計 500 EXP 達成', icon: '🔥' },
+  { id: 'exp_1000', title: '千の積み上げ', desc: '累計 1000 EXP 達成', icon: '👑' },
+  { id: 'long_task', title: 'ディープワーク', desc: '1回で90分以上努力した', icon: '🎯' }
 ];
 
 // --- 🌟 レベル進捗更新 ---
@@ -266,7 +265,7 @@ function updateLevelProgress() {
   let nextLvlObj = null;
 
   for (let i = 0; i < LEVEL_TABLE.length; i++) {
-    if (totalPts >= LEVEL_TABLE[i].pt) {
+    if (totalExp >= LEVEL_TABLE[i].pt) {
       currentLvlObj = LEVEL_TABLE[i];
       nextLvlObj = LEVEL_TABLE[i + 1] || null;
     } else {
@@ -276,51 +275,53 @@ function updateLevelProgress() {
 
   document.getElementById('lvl-badge').textContent = currentLvlObj.title;
   document.getElementById('chara-icon').textContent = currentLvlObj.icon;
-  document.getElementById('lvl-curr-pt').textContent = `${totalPts} 本PT`;
+  document.getElementById('lvl-curr-pt').textContent = `${totalExp} EXP`;
 
   if (nextLvlObj) {
     const prevPt = currentLvlObj.pt;
     const nextPt = nextLvlObj.pt;
-    const progressPercent = Math.min(100, Math.max(0, ((totalPts - prevPt) / (nextPt - prevPt)) * 100));
+    const progressPercent = Math.min(100, Math.max(0, ((totalExp - prevPt) / (nextPt - prevPt)) * 100));
     
     document.getElementById('lvl-progress-fill').style.width = `${progressPercent}%`;
-    document.getElementById('lvl-next-text').textContent = `次まで: ${nextPt - totalPts} 本PT`;
+    document.getElementById('lvl-next-text').textContent = `次まで: ${nextPt - totalExp} EXP`;
   } else {
     document.getElementById('lvl-progress-fill').style.width = "100%";
     document.getElementById('lvl-next-text').textContent = "MAX LEVEL!";
   }
 }
 
-// --- ✍️ 手動入力サポート ---
+// --- ✍️ 1分単位の入力調整 ＆ プレビュー計算 ---
 function appendManualTask(taskName) {
-  document.getElementById('effort-input').value = taskName;
+  document.getElementById('effort-task').value = taskName;
 }
 
-function applyTimeSelect() {
-  const select = document.getElementById('time-select');
-  const selectedTime = select.value;
-  if (!selectedTime) return;
-
-  const input = document.getElementById('effort-input');
-  let currentVal = input.value.trim().replace(/\s*\d+(\.\d+)?(時間|分)/g, '');
-  input.value = currentVal ? `${currentVal} ${selectedTime}` : selectedTime;
-  select.value = "";
+function addMinutes(mins) {
+  const input = document.getElementById('manual-minutes');
+  let current = parseInt(input.value) || 0;
+  input.value = Math.max(1, current + mins);
+  updatePreview();
 }
 
-// --- ⚙️ 仮PT ➔ 本PT 変換処理 ---
-function convertTempToRealPts(effortBasePt) {
-  if (tempPts <= 0) return { realGained: effortBasePt, tempUsed: 0 };
+function updatePreview() {
+  const mins = Math.max(0, parseInt(document.getElementById('manual-minutes').value) || 0);
+  const expectedExp = mins * 1; // 1分 = 1 EXP
+  document.getElementById('calc-preview').textContent = `獲得予定: +${expectedExp} EXP (${mins}分)`;
+}
 
-  // 努力1本PT分に対して、仮PTを2pt引き出して本PT 1ptに変換
-  const maxTempCanConvert = effortBasePt * 2;
-  const tempUsed = Math.min(tempPts, maxTempCanConvert);
-  const convertedRealPt = Math.floor(tempUsed / 2);
+// --- ⚙️ エナジー ➔ EXP 変換処理 ---
+function convertEnergyToExp(baseExp) {
+  if (stockEnergy <= 0 || baseExp <= 0) return { realGained: baseExp, energyUsed: 0 };
 
-  tempPts -= tempUsed;
-  const totalRealGained = effortBasePt + convertedRealPt;
+  // 1EXPにつき、最大2エナジーを消費してEXPに変換
+  const maxEnergyCanConvert = baseExp * 2;
+  const energyUsed = Math.min(stockEnergy, maxEnergyCanConvert);
+  const convertedExp = Math.floor(energyUsed / 2);
 
-  localStorage.setItem('proto_temp_pts', tempPts);
-  return { realGained: totalRealGained, tempUsed };
+  stockEnergy -= energyUsed;
+  const totalGained = baseExp + convertedExp;
+
+  localStorage.setItem('proto_stock_energy', stockEnergy);
+  return { realGained: totalGained, energyUsed };
 }
 
 // --- ⏱️ タイマー機能 ---
@@ -355,18 +356,23 @@ function toggleTimer() {
 
     const mins = Math.floor(timerSeconds / 60);
     const secs = timerSeconds % 60;
-    const timeText = mins > 0 ? `${mins}分` : `${secs}秒`;
-    const basePt = Math.max(10, mins * 10 || 10);
+    const timeText = mins > 0 ? `${mins}分${secs}秒` : `${secs}秒`;
+    
+    // 1分＝1EXP (最低でも1EXP)
+    const baseExp = Math.max(1, mins);
 
-    const { realGained, tempUsed } = convertTempToRealPts(basePt);
+    const { realGained, energyUsed } = convertEnergyToExp(baseExp);
 
-    let msg = `⏱️ 【${taskName}】(${timeText}) 達成！\n+${realGained} 本PT獲得！`;
-    if (tempUsed > 0) {
-      msg += `\n(仮PT ${tempUsed}pt を消費して本PTに変換しました)`;
+    let msg = `⏱️ 【${taskName}】(${timeText}) 達成！\n+${realGained} EXP獲得！`;
+    if (energyUsed > 0) {
+      msg += `\n(エナジー ${energyUsed}pt を消費してEXPに変換しました)`;
     }
 
     alert(msg);
-    addLog(`集中: ${taskName} (${timeText})`, realGained, tempUsed > 0 ? `仮PT ${tempUsed}消費` : '基本評価');
+    checkAchievements('timer_master');
+    if (mins >= 90) checkAchievements('long_task');
+
+    addLog(`集中: ${taskName} (${timeText})`, realGained, energyUsed > 0 ? `エナジー${energyUsed}消費` : '基本評価');
     timerSeconds = 0;
     updateTimerDisplay();
   }
@@ -395,71 +401,103 @@ function checkNegative(text) {
   for (let w of directNegatives) {
     if (text.includes(w)) return { isNeg: true, reason: `ネガティブ行動（${w}）` };
   }
-  if (/(せずに|しないで|打ち切って|途中でやめて|〜だけやって).*(ゲーム|遊|寝|スマホ)/.test(text) || /だけやって.*(寝|サボ|遊)/.test(text)) {
-    return { isNeg: true, reason: "言い訳・計画中断" };
-  }
-  if (/(ゲーム|マンガ|漫画|遊んだ)/.test(text) && !/(作った|開発|勉強|研究)/.test(text)) {
-    return { isNeg: true, reason: "娯楽・誘惑タスク" };
-  }
   return { isNeg: false };
 }
 
 function evaluateEffort() {
-  const inputEl = document.getElementById('effort-input');
-  const text = inputEl.value.trim();
-  if (!text) return;
+  const taskEl = document.getElementById('effort-task');
+  const minEl = document.getElementById('manual-minutes');
+  
+  const taskName = taskEl.value.trim() || "努力作業";
+  const mins = parseInt(minEl.value) || 0;
 
-  let basePt = 0;
+  if (mins <= 0) {
+    alert("努力時間を1分以上で設定してください。");
+    return;
+  }
+
+  let baseExp = mins * 1; // 1分 = 1 EXP
   let reasons = [];
-  const negCheck = checkNegative(text);
+  const negCheck = checkNegative(taskName);
 
   if (negCheck.isNeg) {
-    basePt = -60;
+    baseExp = -50;
     reasons.push(negCheck.reason);
     document.body.classList.remove('flash-red');
     void document.body.offsetWidth;
     document.body.classList.add('flash-red');
 
-    addLog(text, basePt, reasons.join("・"));
+    addLog(taskName, baseExp, reasons.join("・"));
   } else {
-    basePt = 20;
-    const hourMatch = text.match(/(\d+(\.\d+)?)\s*時間/);
-    const minMatch = text.match(/(\d+)\s*分/);
-
-    if (hourMatch) {
-      basePt += Math.min(Math.round(parseFloat(hourMatch[1]) * 40), 160);
-    } else if (minMatch) {
-      basePt += Math.min(Math.round(parseInt(minMatch[1]) * 0.6), 60);
-    }
-
-    const { realGained, tempUsed } = convertTempToRealPts(basePt);
+    const { realGained, energyUsed } = convertEnergyToExp(baseExp);
     
-    reasons.push("手動入力");
-    if (tempUsed > 0) reasons.push(`仮PT ${tempUsed}消費`);
+    reasons.push(`${mins}分間の努力`);
+    if (energyUsed > 0) reasons.push(`エナジー ${energyUsed}消費`);
 
     const resBox = document.getElementById('result-box');
     document.getElementById('res-pts').className = `res-pts plus`;
-    document.getElementById('res-pts').textContent = `+${realGained} 本PT`;
+    document.getElementById('res-pts').textContent = `+${realGained} EXP`;
     document.getElementById('res-reason').textContent = `判定理由: ${reasons.join("・")}`;
     resBox.className = `result-box plus`;
     resBox.style.display = 'block';
 
-    addLog(text, realGained, reasons.join("・"));
+    if (mins >= 90) checkAchievements('long_task');
+    addLog(`${taskName} (${mins}分)`, realGained, reasons.join("・"));
   }
 
-  inputEl.value = '';
+  taskEl.value = '';
+}
+
+// 🏆 実績（アチーブメント）チェック
+function checkAchievements(specificId = null) {
+  if (logs.length > 0) unlockAchieve('first_step');
+  if (specificId) unlockAchieve(specificId);
+
+  if (totalExp >= 100) unlockAchieve('exp_100');
+  if (totalExp >= 500) unlockAchieve('exp_500');
+  if (totalExp >= 1000) unlockAchieve('exp_1000');
+}
+
+function unlockAchieve(id) {
+  if (!unlockedAchievements.includes(id)) {
+    unlockedAchievements.push(id);
+    localStorage.setItem('proto_achievements', JSON.stringify(unlockedAchievements));
+    const item = ACHIEVEMENTS.find(a => a.id === id);
+    if (item) {
+      alert(`🏆 実績解除！ 【${item.title}】\n${item.desc}`);
+    }
+    renderAchievements();
+  }
+}
+
+function renderAchievements() {
+  const container = document.getElementById('achievement-grid');
+  container.innerHTML = ACHIEVEMENTS.map(a => {
+    const isUnlocked = unlockedAchievements.includes(a.id);
+    return `
+      <div class="achieve-card ${isUnlocked ? 'unlocked' : ''}">
+        <div class="achieve-icon">${a.icon}</div>
+        <div class="achieve-info">
+          <div class="achieve-title">${a.title}</div>
+          <div class="achieve-desc">${a.desc}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 // ログ記録
 function addLog(text, pts, reason) {
-  totalPts = Math.max(0, totalPts + pts);
+  totalExp = Math.max(0, totalExp + pts);
   const now = new Date();
   const dateStr = `${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
   
-  logs.push({ text, pts, cumul: totalPts, date: dateStr });
+  logs.push({ text, pts, cumul: totalExp, date: dateStr });
 
-  localStorage.setItem('proto_pro_pts', totalPts);
+  localStorage.setItem('proto_pro_exp', totalExp);
   localStorage.setItem('proto_pro_logs', JSON.stringify(logs));
+  
+  checkAchievements();
   updateUI();
   drawCumulGraph();
 }
@@ -518,192 +556,32 @@ function drawCumulGraph() {
   });
 }
 
-// --- 💣 16マス(4x4) 爆弾回避ゲーム ロジック ---
-const GRID_TOTAL_CELLS = 16;
-const BOMB_COUNT = 2;
-const PER_STEP_ADD_PT = 75; // 14マス完走で 75 * 14 = 1,050 仮PT
-
-let isGameActive = false;
-let currentPrizeTempPts = 0;
-let safeOpenedCount = 0;
-let bombIndices = [];
-
-function initBoardDisplay() {
-  const board = document.getElementById('grid-board');
-  board.innerHTML = '';
-  for (let i = 0; i < GRID_TOTAL_CELLS; i++) {
-    const tile = document.createElement('div');
-    tile.className = 'grid-tile';
-    tile.textContent = '❓';
-    board.appendChild(tile);
-  }
-  updateGameStats();
-}
-
-function updateGameStats() {
-  document.getElementById('stat-current-pt').textContent = `${currentPrizeTempPts} 仮PT`;
-
-  const remainingCells = GRID_TOTAL_CELLS - safeOpenedCount;
-  const remainingSafeCells = remainingCells - BOMB_COUNT;
-
-  if (!isGameActive || remainingSafeCells <= 0) {
-    document.getElementById('stat-next-add').textContent = "-";
-    document.getElementById('stat-prob').textContent = "-";
-    return;
-  }
-
-  document.getElementById('stat-next-add').textContent = `+${PER_STEP_ADD_PT} 仮PT`;
-
-  // 🎯 精密な確率計算 (残りセーフマス / 残り全マス)
-  const prob = ((remainingSafeCells / remainingCells) * 100).toFixed(1);
-  document.getElementById('stat-prob').textContent = `${prob}% (${remainingSafeCells}/${remainingCells})`;
-}
-
-function startGridGame() {
-  if (isGameActive) {
-    if (!confirm("プレイ中のゲームを破棄して新しく始めますか？")) return;
-  }
-
-  // 本PTのみで挑戦可能
-  if (totalPts < 100) {
-    alert("本PTが足りません！ (ゲーム挑戦には 100 本PTが必要です)");
-    return;
-  }
-
-  totalPts -= 100;
-  localStorage.setItem('proto_pro_pts', totalPts);
-
-  isGameActive = true;
-  currentPrizeTempPts = 0;
-  safeOpenedCount = 0;
-
-  bombIndices = [];
-  while (bombIndices.length < BOMB_COUNT) {
-    let r = Math.floor(Math.random() * GRID_TOTAL_CELLS);
-    if (!bombIndices.includes(r)) bombIndices.push(r);
-  }
-
-  const board = document.getElementById('grid-board');
-  board.innerHTML = '';
-  document.getElementById('grid-msg').textContent = "💣 爆弾(2個)を避けてめくれ！(セーフで仮PT獲得)";
-
-  for (let i = 0; i < GRID_TOTAL_CELLS; i++) {
-    const tile = document.createElement('div');
-    tile.className = 'grid-tile';
-    tile.textContent = '❓';
-    tile.onclick = () => pickTile(i, tile);
-    board.appendChild(tile);
-  }
-
-  updateGameStats();
-  updateUI();
-  drawCumulGraph();
-}
-
-function pickTile(index, tileEl) {
-  if (!isGameActive || tileEl.classList.contains('opened')) return;
-
-  tileEl.classList.add('opened');
-
-  if (bombIndices.includes(index)) {
-    tileEl.textContent = '💣';
-    tileEl.style.background = 'rgba(255, 71, 87, 0.3)';
-    document.getElementById('grid-msg').textContent = "💥 ドカン！爆弾を引き当てた！仮PTは没収…";
-    isGameActive = false;
-
-    const tiles = document.querySelectorAll('.grid-tile');
-    bombIndices.forEach(idx => {
-      tiles[idx].textContent = '💣';
-      tiles[idx].classList.add('opened');
-      tiles[idx].style.background = 'rgba(255, 71, 87, 0.3)';
-    });
-    updateGameStats();
-    return;
-  }
-
-  safeOpenedCount++;
-  currentPrizeTempPts += PER_STEP_ADD_PT;
-
-  tileEl.textContent = '💎';
-  tileEl.style.background = 'rgba(46, 213, 115, 0.2)';
-
-  const rand = Math.random();
-  let gotItem = null;
-  if (rand < 0.25) {
-    gotItem = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)];
-    if (!unlockedGacha.includes(gotItem.id)) {
-      unlockedGacha.push(gotItem.id);
-      localStorage.setItem('proto_gacha_col', JSON.stringify(unlockedGacha));
-    }
-  }
-
-  const maxSafeCount = GRID_TOTAL_CELLS - BOMB_COUNT;
-  if (safeOpenedCount === maxSafeCount) {
-    tempPts += currentPrizeTempPts;
-    localStorage.setItem('proto_temp_pts', tempPts);
-
-    alert(`🎉 パーフェクト！ 全セーフ達成！\n仮PT 【${currentPrizeTempPts} PT】 を獲得しました！\n（努力を行って本PTに換金してください）`);
-    addLog("💣 爆弾回避完走", 0, `仮PT +${currentPrizeTempPts}`);
-    isGameActive = false;
-    document.getElementById('grid-msg').textContent = "🏆 完全クリアおめでとう！";
-    updateGameStats();
-    updateUI();
-  } else {
-    let msg = `セーフ！ (＋${PER_STEP_ADD_PT} 仮PT)`;
-    if (gotItem) msg += ` (［${gotItem.rarity}］${gotItem.name} 獲得!)`;
-    document.getElementById('grid-msg').textContent = msg;
-
-    updateGameStats();
-
-    setTimeout(() => {
-      if (confirm(`セーフ！現在 【${currentPrizeTempPts} 仮PT】 キープ中。\nここで確定してストックしますか？\n（[キャンセル]で次のマスに挑戦）`)) {
-        tempPts += currentPrizeTempPts;
-        localStorage.setItem('proto_temp_pts', tempPts);
-
-        addLog("💣 爆弾回避利確", 0, `仮PT +${currentPrizeTempPts}`);
-        isGameActive = false;
-        document.getElementById('grid-msg').textContent = `💰 ${currentPrizeTempPts} 仮PT を獲得しました！`;
-        updateGameStats();
-        updateUI();
-      }
-    }, 100);
-  }
-}
-
-function renderCollection() {
-  const container = document.getElementById('collection-grid');
-  container.innerHTML = GACHA_ITEMS.map(item => {
-    const isUnlocked = unlockedGacha.includes(item.id);
-    return `<div class="col-item ${isUnlocked ? 'unlocked' : ''}" title="${item.name}">${isUnlocked ? item.icon : '❓'}</div>`;
-  }).join('');
-}
-
 function resetAllData() {
-  if (confirm("全データを削除しますか？")) {
+  if (confirm("全データを削除してリセットしますか？")) {
     localStorage.clear();
     location.reload();
   }
 }
 
 function updateUI() {
-  document.getElementById('total-pts-text').textContent = `本PT: ${totalPts}`;
-  document.getElementById('temp-pts-text').textContent = `仮PT: ${tempPts} (今日限定)`;
+  document.getElementById('total-pts-text').textContent = `確定EXP: ${totalExp}`;
+  document.getElementById('temp-pts-text').textContent = `ストックエナジー: ${stockEnergy}`;
   
   updateLevelProgress();
-  renderCollection();
+  renderAchievements();
+  updatePreview();
 
   const logEl = document.getElementById('log-list');
   logEl.innerHTML = logs.length === 0 ? `<div style="text-align:center;color:var(--sub);font-size:11px;padding:0.5rem;">記録なし</div>` :
     [...logs].reverse().map(l => `
       <div class="log-item">
         <div><div>${l.text}</div><div style="font-size:9px;color:var(--sub);">${l.date}</div></div>
-        <div class="${l.pts >= 0 ? 'pts-plus' : 'pts-minus'}">${l.pts >= 0 ? '+' : ''}${l.pts} 本PT (累計:${l.cumul || 0})</div>
+        <div class="${l.pts >= 0 ? 'pts-plus' : 'pts-minus'}">${l.pts >= 0 ? '+' : ''}${l.pts} EXP (累計:${l.cumul || 0})</div>
       </div>
     `).join('');
 }
 
 checkDailyReset();
-initBoardDisplay();
 updateUI();
 setTimeout(drawCumulGraph, 100);
 </script>
