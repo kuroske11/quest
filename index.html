@@ -22,27 +22,29 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 .flash-red { animation: flashRed 0.6s ease-out; }
 
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-.feedback-btn { font-size: 11px; color: var(--accent); border: 1px solid var(--accent); padding: 4px 10px; border-radius: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: background 0.2s; }
-.feedback-btn:hover { background: rgba(255,184,0,0.1); }
+
+.feedback-btn { font-size: 14px; font-weight: bold; color: #000; background: var(--accent); padding: 8px 16px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: transform 0.2s, opacity 0.2s; box-shadow: 0 4px 12px rgba(255,184,0,0.3); }
+.feedback-btn:hover { opacity: 0.9; transform: scale(1.02); }
+.feedback-btn.large { font-size: 15px; padding: 12px 24px; border-radius: 24px; }
 
 .chara-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; text-align: center; position: relative; }
 .chara-avatar { font-size: 56px; margin: 0.25rem 0; }
-.level-badge { display: inline-block; background: var(--accent); color: #000; font-weight: bold; font-size: 11px; padding: 3px 12px; border-radius: 12px; }
+.level-badge { display: inline-block; background: var(--accent); color: #000; font-weight: bold; font-size: 12px; padding: 4px 14px; border-radius: 12px; }
 
-/* PT/EXP表示エリア */
 .pt-display-group { display: flex; justify-content: center; gap: 12px; margin-top: 8px; }
 .pt-badge { background: var(--muted); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: bold; }
 .pt-badge.temp { border-color: var(--blue); color: var(--blue); }
 
-.level-progress-container { margin-top: 10px; }
-.level-progress-bar { background: var(--muted); height: 10px; border-radius: 5px; overflow: hidden; position: relative; border: 1px solid var(--border); }
+.level-visual-card { background: var(--muted); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-top: 12px; }
+.level-info-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.next-exp-highlight { font-size: 18px; font-weight: 900; color: var(--accent); }
+.level-progress-bar { background: rgba(0,0,0,0.4); height: 14px; border-radius: 7px; overflow: hidden; position: relative; border: 1px solid var(--border); }
 .level-progress-fill { background: linear-gradient(90deg, #FFB800, #2ed573); height: 100%; width: 0%; transition: width 0.4s ease; }
-.level-progress-text { font-size: 10px; color: var(--sub); margin-top: 4px; display: flex; justify-content: space-between; }
+.level-progress-text { font-size: 11px; color: var(--sub); margin-top: 6px; display: flex; justify-content: space-between; }
 
 .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; margin-top: 1rem; }
 .card-title { font-size: 13px; font-weight: bold; color: var(--sub); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; }
 
-/* タイマー＆入力 */
 .input-group { display: flex; gap: 8px; margin-bottom: 8px; }
 input[type="text"], input[type="number"] { background: var(--muted); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 10px; font-size: 13px; outline: none; }
 input[type="text"] { flex: 1; }
@@ -57,15 +59,15 @@ input:focus { border-color: var(--accent); }
 .btn-timer.primary { background: var(--accent); color: #000; border: none; }
 
 .chip-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-.chip { background: var(--muted); border: 1px solid var(--border); color: var(--text); font-size: 11px; padding: 6px 12px; border-radius: 16px; cursor: pointer; }
+.chip { background: var(--muted); border: 1px solid var(--border); color: var(--text); font-size: 11px; padding: 6px 12px; border-radius: 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
 .chip.btn-time { border-color: var(--sub); color: var(--accent); }
-.chip:active { background: var(--border); }
+.chip.add-btn { border-color: var(--accent); color: var(--accent); font-weight: bold; }
+.chip .remove-chip { font-size: 10px; color: var(--sub); margin-left: 2px; }
+.chip .remove-chip:hover { color: var(--red); }
 
-/* 評価基準ガイド & リアルタイム計算表示 */
 .eval-guide { background: var(--muted); border-radius: 8px; padding: 8px 12px; font-size: 11px; color: var(--sub); margin-bottom: 10px; border-left: 3px solid var(--accent); }
 .calc-preview { font-size: 12px; font-weight: bold; color: var(--accent); margin-bottom: 8px; text-align: right; }
 
-/* アチーブメント */
 .achievement-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 .achieve-card { background: var(--muted); border: 1px solid var(--border); border-radius: 10px; padding: 8px; display: flex; align-items: center; gap: 8px; opacity: 0.3; filter: grayscale(100%); transition: 0.3s; }
 .achieve-card.unlocked { opacity: 1; filter: grayscale(0%); border-color: var(--accent); }
@@ -74,11 +76,9 @@ input:focus { border-color: var(--accent); }
 .achieve-title { font-size: 11px; font-weight: bold; color: var(--text); }
 .achieve-desc { font-size: 9px; color: var(--sub); }
 
-/* 📊 棒グラフコンテナ */
 .graph-container { width: 100%; height: 160px; margin-top: 8px; }
 canvas { width: 100%; height: 100%; }
 
-/* 判定結果 */
 .result-box { display: none; border-radius: 12px; padding: 0.75rem; margin-top: 10px; text-align: center; border: 1px solid var(--border); }
 .result-box.plus { background: rgba(46, 213, 115, 0.1); border-color: var(--green); }
 .result-box.minus { background: rgba(255, 71, 87, 0.2); border-color: var(--red); }
@@ -102,39 +102,36 @@ canvas { width: 100%; height: 100%; }
   </a>
 </div>
 
-<!-- キャラクター & EXP / レベル進捗 -->
 <div class="chara-card">
-  <div class="level-badge" id="lvl-badge">Lv.1 見習い</div>
+  <div class="level-badge" id="lvl-badge">Lv.1 タマゴ</div>
   <div class="chara-avatar" id="chara-icon">🥚</div>
   
   <div class="pt-display-group">
     <div class="pt-badge" id="total-pts-text">確定EXP: 0</div>
-    <div class="pt-badge temp" id="temp-pts-text" title="努力記録時に同時にEXPに変換されます">ストックエナジー: 0</div>
+    <div class="pt-badge temp" id="temp-pts-text">ストックエナジー: 0</div>
   </div>
   
-  <div class="level-progress-container">
+  <div class="level-visual-card">
+    <div class="level-info-top">
+      <span style="font-size: 11px; color: var(--sub);">次のレベルまで</span>
+      <span class="next-exp-highlight" id="next-exp-needed">あと 100 EXP</span>
+    </div>
     <div class="level-progress-bar">
       <div class="level-progress-fill" id="lvl-progress-fill"></div>
     </div>
     <div class="level-progress-text">
-      <span id="lvl-curr-pt">0 EXP</span>
-      <span id="lvl-next-text">次まで: 100 EXP</span>
+      <span id="lvl-curr-pt">現在の経験値: 0 EXP</span>
+      <span id="lvl-target-pt">目標: 100 EXP</span>
     </div>
   </div>
 </div>
 
-<!-- ⏱️ 集中タイマー記録 -->
 <div class="card">
   <div class="card-title"><span><i class="ti ti-timer"></i> 集中タイマーで記録</span></div>
   <div class="input-group">
     <input type="text" id="timer-task-input" placeholder="タスク名 (例: 数学、読書)" maxlength="30">
   </div>
-  <div class="chip-container">
-    <div class="chip" onclick="setTimerTask('数学')">✏️ 数学</div>
-    <div class="chip" onclick="setTimerTask('英語')">📖 英語</div>
-    <div class="chip" onclick="setTimerTask('筋トレ')">💪 筋トレ</div>
-    <div class="chip" onclick="setTimerTask('読書')">📚 読書</div>
-  </div>
+  <div class="chip-container" id="timer-chip-container"></div>
   <div class="timer-display" id="timer-display">00:00</div>
   <div class="timer-btn-group">
     <button class="btn-timer primary" id="timer-start-btn" onclick="toggleTimer()">スタート</button>
@@ -142,7 +139,6 @@ canvas { width: 100%; height: 100%; }
   </div>
 </div>
 
-<!-- ✍️ 手動判定・記録 -->
 <div class="card">
   <div class="card-title"><span><i class="ti ti-pencil"></i> 1分単位で手動記録</span></div>
   
@@ -153,13 +149,7 @@ canvas { width: 100%; height: 100%; }
     ・「サボった」「寝坊」などの否定・言い訳入力は減点 (-50 EXP)
   </div>
 
-  <div class="chip-container">
-    <div class="chip" onclick="appendManualTask('数学')">✏️ 数学</div>
-    <div class="chip" onclick="appendManualTask('英語')">📖 英語</div>
-    <div class="chip" onclick="appendManualTask('筋トレ')">💪 筋トレ</div>
-    <div class="chip" onclick="appendManualTask('読書')">📚 読書</div>
-    <div class="chip" onclick="appendManualTask('プログラミング')">💻 開発</div>
-  </div>
+  <div class="chip-container" id="manual-chip-container"></div>
 
   <div class="input-group">
     <input type="text" id="effort-task" placeholder="内容 (例: 数学演習)" maxlength="40">
@@ -183,7 +173,6 @@ canvas { width: 100%; height: 100%; }
   </div>
 </div>
 
-<!-- 📊 日毎の努力時間 棒グラフ（新機能） -->
 <div class="card">
   <div class="card-title"><span><i class="ti ti-chart-bar"></i> 日毎の努力時間（直近7日間）</span></div>
   <div class="graph-container">
@@ -191,13 +180,11 @@ canvas { width: 100%; height: 100%; }
   </div>
 </div>
 
-<!-- 🏆 実績・アチーブメント -->
 <div class="card">
-  <div class="card-title"><span><i class="ti ti-trophy"></i> 実績・アチーブメント</span></div>
+  <div class="card-title"><span><i class="ti ti-trophy"></i> 実績・アチーブメント (<span id="achieve-count">0/12</span>)</span></div>
   <div class="achievement-grid" id="achievement-grid"></div>
 </div>
 
-<!-- ログ & リセット -->
 <div class="card">
   <div class="card-title">
     <span><i class="ti ti-history"></i> 行動ログ</span>
@@ -206,20 +193,21 @@ canvas { width: 100%; height: 100%; }
   <div id="log-list"></div>
 </div>
 
-<div style="text-align: center; margin-top: 1.5rem; margin-bottom: 1rem;">
-  <a href="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform" target="_blank" class="feedback-btn" style="padding: 6px 16px;">
-    💡 システム改善のご意見（Googleフォーム）
+<div style="text-align: center; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+  <a href="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform" target="_blank" class="feedback-btn large">
+    💡 フィードバックを送る（Googleフォーム）
   </a>
 </div>
 
 <script>
-const MAX_MINUTES = 1440; // 上限1,440分 (24時間)
+const MAX_MINUTES = 1440;
 let totalExp = Math.max(0, Number(localStorage.getItem('proto_pro_exp')) || 0);
 let stockEnergy = Math.max(0, Number(localStorage.getItem('proto_stock_energy')) || 0);
 let lastDate = localStorage.getItem('proto_last_date') || "";
 
 let logs = JSON.parse(localStorage.getItem('proto_pro_logs')) || [];
 let unlockedAchievements = JSON.parse(localStorage.getItem('proto_achievements')) || [];
+let customChips = JSON.parse(localStorage.getItem('proto_custom_chips')) || ['✏️ 数学', '📖 英語', '💪 筋トレ', '📚 読書', '💻 開発'];
 
 function checkDailyReset() {
   const today = new Date().toISOString().split('T')[0];
@@ -238,9 +226,10 @@ const LEVEL_TABLE = [
   { pt: 0, lvl: 1, title: "Lv.1 タマゴ", icon: "🥚" },
   { pt: 100, lvl: 2, title: "Lv.2 ひよこ", icon: "🐣" },
   { pt: 300, lvl: 3, title: "Lv.3 見習い勇者", icon: "🏃" },
-  { pt: 600, lvl: 4, title: "Lv.4 熟練アドベンチャラー", icon: "⚔️" },
+  { pt: 600, lvl: 4, title: "Lv.4 熟練者", icon: "⚔️" },
   { pt: 1000, lvl: 5, title: "Lv.5 努力の達人", icon: "🔥" },
-  { pt: 2000, lvl: 6, title: "Lv.6 伝説の努力家", icon: "👑" }
+  { pt: 1800, lvl: 6, title: "Lv.6 努力の超人", icon: "💎" },
+  { pt: 3000, lvl: 7, title: "Lv.7 伝説の努力家", icon: "👑" }
 ];
 
 const ACHIEVEMENTS = [
@@ -249,8 +238,55 @@ const ACHIEVEMENTS = [
   { id: 'exp_100', title: '百錬成鋼', desc: '累計 100 EXP 達成', icon: '⚡' },
   { id: 'exp_500', title: '努力の領域', desc: '累計 500 EXP 達成', icon: '🔥' },
   { id: 'exp_1000', title: '千の積み上げ', desc: '累計 1000 EXP 達成', icon: '👑' },
-  { id: 'long_task', title: 'ディープワーク', desc: '1回で90分以上努力した', icon: '🎯' }
+  { id: 'exp_3000', title: '極めし者', desc: '累計 3000 EXP 達成', icon: '🌌' },
+  { id: 'long_task', title: 'ディープワーク', desc: '1回で90分以上努力した', icon: '🎯' },
+  { id: 'marathon', title: '超集中', desc: '1回で180分以上努力した', icon: '🏆' },
+  { id: 'night_owl', title: '夜道の努力家', desc: '22:00〜04:00の間に記録', icon: '🌙' },
+  { id: 'early_bird', title: '朝活マスター', desc: '05:00〜08:00の間に記録', icon: '🌅' },
+  { id: 'custom_chip', title: '自分ルール', desc: 'カスタムチップを追加した', icon: '🏷️' },
+  { id: 'log_10', title: '継続の芽', desc: '合計10回努力を記録した', icon: '📊' }
 ];
+
+function renderChips() {
+  const timerContainer = document.getElementById('timer-chip-container');
+  const manualContainer = document.getElementById('manual-chip-container');
+
+  let html = customChips.map((chip, index) => `
+    <div class="chip" onclick="setTaskFromChip('${chip.replace(/^[^\s]+ /, '')}')">
+      ${chip}
+      <span class="remove-chip" onclick="removeCustomChip(event, ${index})">✕</span>
+    </div>
+  `).join('');
+
+  html += `<div class="chip add-btn" onclick="addCustomChip()">+ タスク追加</div>`;
+
+  timerContainer.innerHTML = html;
+  manualContainer.innerHTML = html;
+}
+
+function setTaskFromChip(name) {
+  document.getElementById('timer-task-input').value = name;
+  document.getElementById('effort-task').value = name;
+}
+
+function addCustomChip() {
+  const name = prompt("追加したいタスク名を入力してください（例: 📖 読書）");
+  if (name && name.trim() !== "") {
+    customChips.push(name.trim());
+    localStorage.setItem('proto_custom_chips', JSON.stringify(customChips));
+    renderChips();
+    unlockAchieve('custom_chip');
+  }
+}
+
+function removeCustomChip(e, index) {
+  e.stopPropagation();
+  if (confirm(`「${customChips[index]}」チップを削除しますか？`)) {
+    customChips.splice(index, 1);
+    localStorage.setItem('proto_custom_chips', JSON.stringify(customChips));
+    renderChips();
+  }
+}
 
 function updateLevelProgress() {
   let currentLvlObj = LEVEL_TABLE[0];
@@ -267,23 +303,22 @@ function updateLevelProgress() {
 
   document.getElementById('lvl-badge').textContent = currentLvlObj.title;
   document.getElementById('chara-icon').textContent = currentLvlObj.icon;
-  document.getElementById('lvl-curr-pt').textContent = `${totalExp} EXP`;
+  document.getElementById('lvl-curr-pt').textContent = `現在の経験値: ${totalExp} EXP`;
 
   if (nextLvlObj) {
     const prevPt = currentLvlObj.pt;
     const nextPt = nextLvlObj.pt;
+    const needed = nextPt - totalExp;
     const progressPercent = Math.min(100, Math.max(0, ((totalExp - prevPt) / (nextPt - prevPt)) * 100));
     
+    document.getElementById('next-exp-needed').textContent = `あと ${needed} EXP`;
     document.getElementById('lvl-progress-fill').style.width = `${progressPercent}%`;
-    document.getElementById('lvl-next-text').textContent = `次まで: ${nextPt - totalExp} EXP`;
+    document.getElementById('lvl-target-pt').textContent = `目標: ${nextPt} EXP`;
   } else {
+    document.getElementById('next-exp-needed').textContent = "カンスト！";
     document.getElementById('lvl-progress-fill').style.width = "100%";
-    document.getElementById('lvl-next-text').textContent = "MAX LEVEL!";
+    document.getElementById('lvl-target-pt').textContent = "MAX LEVEL";
   }
-}
-
-function appendManualTask(taskName) {
-  document.getElementById('effort-task').value = taskName;
 }
 
 function addMinutes(mins) {
@@ -329,14 +364,9 @@ function convertEnergyToExp(baseExp) {
   return { realGained: totalGained, energyUsed };
 }
 
-// ⏱️ タイマー機能
 let timerInterval = null;
 let timerSeconds = 0;
 let isTimerRunning = false;
-
-function setTimerTask(name) {
-  document.getElementById('timer-task-input').value = name;
-}
 
 function toggleTimer() {
   const taskInput = document.getElementById('timer-task-input');
@@ -374,6 +404,7 @@ function toggleTimer() {
     alert(msg);
     checkAchievements('timer_master');
     if (mins >= 90) checkAchievements('long_task');
+    if (mins >= 180) checkAchievements('marathon');
 
     addLog(`集中: ${taskName} (${timeText})`, realGained, energyUsed > 0 ? `エナジー${energyUsed}消費` : '基本評価', mins);
     timerSeconds = 0;
@@ -398,7 +429,6 @@ function updateTimerDisplay() {
   document.getElementById('timer-display').textContent = `${m}:${s}`;
 }
 
-// ✍️ 手動判定
 function checkNegative(text) {
   const directNegatives = ["サボっ", "寝てた", "寝坊", "遅刻", "ダラダラ", "忘れた", "怠けた", "YouTube", "TikTok", "スマホいじっ"];
   for (let w of directNegatives) {
@@ -451,6 +481,7 @@ function evaluateEffort() {
     resBox.style.display = 'block';
 
     if (mins >= 90) checkAchievements('long_task');
+    if (mins >= 180) checkAchievements('marathon');
     addLog(`${taskName} (${mins}分)`, realGained, reasons.join("・"), mins);
   }
 
@@ -458,12 +489,19 @@ function evaluateEffort() {
 }
 
 function checkAchievements(specificId = null) {
+  const nowHour = new Date().getHours();
+
   if (logs.length > 0) unlockAchieve('first_step');
+  if (logs.length >= 10) unlockAchieve('log_10');
   if (specificId) unlockAchieve(specificId);
 
   if (totalExp >= 100) unlockAchieve('exp_100');
   if (totalExp >= 500) unlockAchieve('exp_500');
   if (totalExp >= 1000) unlockAchieve('exp_1000');
+  if (totalExp >= 3000) unlockAchieve('exp_3000');
+
+  if (nowHour >= 22 || nowHour < 4) unlockAchieve('night_owl');
+  if (nowHour >= 5 && nowHour < 8) unlockAchieve('early_bird');
 }
 
 function unlockAchieve(id) {
@@ -480,6 +518,8 @@ function unlockAchieve(id) {
 
 function renderAchievements() {
   const container = document.getElementById('achievement-grid');
+  document.getElementById('achieve-count').textContent = `${unlockedAchievements.length}/${ACHIEVEMENTS.length}`;
+
   container.innerHTML = ACHIEVEMENTS.map(a => {
     const isUnlocked = unlockedAchievements.includes(a.id);
     return `
@@ -497,7 +537,7 @@ function renderAchievements() {
 function addLog(text, pts, reason, durationMins = 0) {
   totalExp = Math.max(0, totalExp + pts);
   const now = new Date();
-  const isoDate = now.toISOString().split('T')[0]; // YYYY-MM-DD
+  const isoDate = now.toISOString().split('T')[0];
   const dateStr = `${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
   
   logs.push({ text, pts, durationMins, isoDate, cumul: totalExp, date: dateStr });
@@ -510,7 +550,6 @@ function addLog(text, pts, reason, durationMins = 0) {
   drawDailyBarChart();
 }
 
-// 📊 日毎の努力時間 棒グラフ描画 (Canvas)
 function drawDailyBarChart() {
   const canvas = document.getElementById('dailyBarChart');
   if (!canvas) return;
@@ -519,7 +558,6 @@ function drawDailyBarChart() {
   canvas.height = 160;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // 直近7日分のISO日付配列を生成 (例: ["2026-09-08", ... "2026-09-14"])
   const days = [];
   const dayLabels = [];
   const today = new Date();
@@ -533,7 +571,6 @@ function drawDailyBarChart() {
     dayLabels.push(label);
   }
 
-  // 日付ごとの合計分数を計算
   const dailyTotals = days.map(iso => {
     return logs.reduce((acc, log) => {
       if (log.isoDate === iso && log.durationMins > 0) {
@@ -543,13 +580,12 @@ function drawDailyBarChart() {
     }, 0);
   });
 
-  const maxVal = Math.max(...dailyTotals, 120); // 最低スケールは120分
+  const maxVal = Math.max(...dailyTotals, 120);
   const paddingBottom = 25;
   const paddingTop = 25;
   const chartHeight = canvas.height - paddingBottom - paddingTop;
   const barWidth = Math.floor((canvas.width - 40) / 7) - 8;
 
-  // 60分の点線ガイドライン描画
   const targetMin = 60;
   const targetY = (canvas.height - paddingBottom) - (targetMin / maxVal) * chartHeight;
   ctx.beginPath();
@@ -559,45 +595,38 @@ function drawDailyBarChart() {
   ctx.moveTo(15, targetY);
   ctx.lineTo(canvas.width - 15, targetY);
   ctx.stroke();
-  ctx.setLineDash([]); // リセット
+  ctx.setLineDash([]);
 
   ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
   ctx.font = "9px sans-serif";
   ctx.textAlign = "right";
   ctx.fillText("60分", canvas.width - 5, targetY - 2);
 
-  // 棒グラフを描画
   dailyTotals.forEach((total, i) => {
     const x = 20 + i * (barWidth + 8);
     const barHeight = (total / maxVal) * chartHeight;
     const y = (canvas.height - paddingBottom) - barHeight;
 
-    // バーの描画
     if (i === 6) {
-      // 本日分は強調色
       ctx.fillStyle = "#FFB800";
     } else {
       ctx.fillStyle = total > 0 ? "#70a1ff" : "#2a2a32";
     }
 
     if (total > 0) {
-      // 角丸の棒
       const radius = 4;
       ctx.beginPath();
       ctx.roundRect(x, y, barWidth, barHeight, [radius, radius, 0, 0]);
       ctx.fill();
 
-      // 数値表示 (バーの上)
       ctx.fillStyle = "#f0f0f5";
       ctx.font = "10px sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(`${total}分`, x + barWidth / 2, y - 4);
     } else {
-      // 0分の空バー
       ctx.fillRect(x, canvas.height - paddingBottom - 2, barWidth, 2);
     }
 
-    // 日付ラベル (バーの下)
     ctx.fillStyle = i === 6 ? "#FFB800" : "#9090a0";
     ctx.font = "10px sans-serif";
     ctx.textAlign = "center";
@@ -617,6 +646,7 @@ function updateUI() {
   document.getElementById('temp-pts-text').textContent = `ストックエナジー: ${stockEnergy}`;
   
   updateLevelProgress();
+  renderChips();
   renderAchievements();
   updatePreview();
 
