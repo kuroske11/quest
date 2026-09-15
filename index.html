@@ -29,7 +29,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 .chara-avatar { font-size: 56px; margin: 0.25rem 0; }
 .level-badge { display: inline-block; background: var(--accent); color: #000; font-weight: bold; font-size: 11px; padding: 3px 12px; border-radius: 12px; }
 
-/* 🌟 PT/EXP表示エリア */
+/* PT/EXP表示エリア */
 .pt-display-group { display: flex; justify-content: center; gap: 12px; margin-top: 8px; }
 .pt-badge { background: var(--muted); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: bold; }
 .pt-badge.temp { border-color: var(--blue); color: var(--blue); }
@@ -42,7 +42,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; margin-top: 1rem; }
 .card-title { font-size: 13px; font-weight: bold; color: var(--sub); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; }
 
-/* ⏱️ タイマー＆入力 */
+/* タイマー＆入力 */
 .input-group { display: flex; gap: 8px; margin-bottom: 8px; }
 input[type="text"], input[type="number"] { background: var(--muted); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 10px; font-size: 13px; outline: none; }
 input[type="text"] { flex: 1; }
@@ -61,11 +61,11 @@ input:focus { border-color: var(--accent); }
 .chip.btn-time { border-color: var(--sub); color: var(--accent); }
 .chip:active { background: var(--border); }
 
-/* 💡 評価基準ガイド & リアルタイム計算表示 */
+/* 評価基準ガイド & リアルタイム計算表示 */
 .eval-guide { background: var(--muted); border-radius: 8px; padding: 8px 12px; font-size: 11px; color: var(--sub); margin-bottom: 10px; border-left: 3px solid var(--accent); }
 .calc-preview { font-size: 12px; font-weight: bold; color: var(--accent); margin-bottom: 8px; text-align: right; }
 
-/* 🏆 アチーブメント (実績) */
+/* アチーブメント */
 .achievement-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 .achieve-card { background: var(--muted); border: 1px solid var(--border); border-radius: 10px; padding: 8px; display: flex; align-items: center; gap: 8px; opacity: 0.3; filter: grayscale(100%); transition: 0.3s; }
 .achieve-card.unlocked { opacity: 1; filter: grayscale(0%); border-color: var(--accent); }
@@ -74,8 +74,8 @@ input:focus { border-color: var(--accent); }
 .achieve-title { font-size: 11px; font-weight: bold; color: var(--text); }
 .achieve-desc { font-size: 9px; color: var(--sub); }
 
-/* グラフ */
-.graph-container { width: 100%; height: 130px; margin-top: 8px; }
+/* 📊 棒グラフコンテナ */
+.graph-container { width: 100%; height: 160px; margin-top: 8px; }
 canvas { width: 100%; height: 100%; }
 
 /* 判定結果 */
@@ -97,7 +97,6 @@ canvas { width: 100%; height: 100%; }
 
 <div class="header">
   <h2 style="font-size: 18px;">🔥 努力計測システム</h2>
-  <!-- 💡 Googleフォーム等のURLを以下に設定してください -->
   <a href="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform" target="_blank" class="feedback-btn">
     <i class="ti ti-message-dots"></i> ご意見・要望
   </a>
@@ -113,7 +112,6 @@ canvas { width: 100%; height: 100%; }
     <div class="pt-badge temp" id="temp-pts-text" title="努力記録時に同時にEXPに変換されます">ストックエナジー: 0</div>
   </div>
   
-  <!-- 進捗ゲージ -->
   <div class="level-progress-container">
     <div class="level-progress-bar">
       <div class="level-progress-fill" id="lvl-progress-fill"></div>
@@ -144,14 +142,13 @@ canvas { width: 100%; height: 100%; }
   </div>
 </div>
 
-<!-- ✍️ 手動判定・記録 (1分単位) -->
+<!-- ✍️ 手動判定・記録 -->
 <div class="card">
   <div class="card-title"><span><i class="ti ti-pencil"></i> 1分単位で手動記録</span></div>
   
-  <!-- 評価ルール明示 -->
   <div class="eval-guide">
     <strong>💡 評価ルール:</strong><br>
-    ・努力時間 <strong>1分 ＝ 1 EXP</strong> 獲得<br>
+    ・努力時間 <strong>1分 ＝ 1 EXP</strong> 獲得（上限1回1,440分）<br>
     ・ストックエナジー保有時は消費してEXPをさらに獲得<br>
     ・「サボった」「寝坊」などの否定・言い訳入力は減点 (-50 EXP)
   </div>
@@ -166,11 +163,10 @@ canvas { width: 100%; height: 100%; }
 
   <div class="input-group">
     <input type="text" id="effort-task" placeholder="内容 (例: 数学演習)" maxlength="40">
-    <input type="number" id="manual-minutes" placeholder="分" min="1" max="1440" value="30" oninput="updatePreview()">
+    <input type="number" id="manual-minutes" placeholder="分" min="1" max="1440" value="30" oninput="updatePreview()" onchange="updatePreview()">
     <button class="btn-eval" onclick="evaluateEffort()">記録</button>
   </div>
 
-  <!-- 分単位調整クイックボタン -->
   <div class="chip-container">
     <div class="chip btn-time" onclick="addMinutes(1)">+1分</div>
     <div class="chip btn-time" onclick="addMinutes(5)">+5分</div>
@@ -179,7 +175,6 @@ canvas { width: 100%; height: 100%; }
     <div class="chip btn-time" onclick="addMinutes(60)">+60分</div>
   </div>
 
-  <!-- 💡 リアルタイム見込み計算 -->
   <div class="calc-preview" id="calc-preview">獲得予定: 30 EXP (30分)</div>
 
   <div class="result-box" id="result-box">
@@ -188,20 +183,18 @@ canvas { width: 100%; height: 100%; }
   </div>
 </div>
 
-<!-- 🏆 アチーブメント (ゲーム代替要素) -->
+<!-- 📊 日毎の努力時間 棒グラフ（新機能） -->
 <div class="card">
-  <div class="card-title"><span><i class="ti ti-trophy"></i> 実績・アチーブメント</span></div>
-  <div class="achievement-grid" id="achievement-grid">
-    <!-- JSで動的生成 -->
+  <div class="card-title"><span><i class="ti ti-chart-bar"></i> 日毎の努力時間（直近7日間）</span></div>
+  <div class="graph-container">
+    <canvas id="dailyBarChart"></canvas>
   </div>
 </div>
 
-<!-- 📊 EXP推移グラフ -->
+<!-- 🏆 実績・アチーブメント -->
 <div class="card">
-  <div class="card-title"><span><i class="ti ti-chart-line"></i> 確定EXP推移（直近10回）</span></div>
-  <div class="graph-container">
-    <canvas id="cumulChart"></canvas>
-  </div>
+  <div class="card-title"><span><i class="ti ti-trophy"></i> 実績・アチーブメント</span></div>
+  <div class="achievement-grid" id="achievement-grid"></div>
 </div>
 
 <!-- ログ & リセット -->
@@ -220,6 +213,7 @@ canvas { width: 100%; height: 100%; }
 </div>
 
 <script>
+const MAX_MINUTES = 1440; // 上限1,440分 (24時間)
 let totalExp = Math.max(0, Number(localStorage.getItem('proto_pro_exp')) || 0);
 let stockEnergy = Math.max(0, Number(localStorage.getItem('proto_stock_energy')) || 0);
 let lastDate = localStorage.getItem('proto_last_date') || "";
@@ -227,7 +221,6 @@ let lastDate = localStorage.getItem('proto_last_date') || "";
 let logs = JSON.parse(localStorage.getItem('proto_pro_logs')) || [];
 let unlockedAchievements = JSON.parse(localStorage.getItem('proto_achievements')) || [];
 
-// 📅 日付チェック（1日経過でストックエナジー失効）
 function checkDailyReset() {
   const today = new Date().toISOString().split('T')[0];
   if (lastDate && lastDate !== today) {
@@ -259,7 +252,6 @@ const ACHIEVEMENTS = [
   { id: 'long_task', title: 'ディープワーク', desc: '1回で90分以上努力した', icon: '🎯' }
 ];
 
-// --- 🌟 レベル進捗更新 ---
 function updateLevelProgress() {
   let currentLvlObj = LEVEL_TABLE[0];
   let nextLvlObj = null;
@@ -290,7 +282,6 @@ function updateLevelProgress() {
   }
 }
 
-// --- ✍️ 1分単位の入力調整 ＆ プレビュー計算 ---
 function appendManualTask(taskName) {
   document.getElementById('effort-task').value = taskName;
 }
@@ -298,21 +289,35 @@ function appendManualTask(taskName) {
 function addMinutes(mins) {
   const input = document.getElementById('manual-minutes');
   let current = parseInt(input.value) || 0;
-  input.value = Math.max(1, current + mins);
+  let newValue = Math.min(MAX_MINUTES, Math.max(1, current + mins));
+  input.value = newValue;
   updatePreview();
 }
 
 function updatePreview() {
-  const mins = Math.max(0, parseInt(document.getElementById('manual-minutes').value) || 0);
-  const expectedExp = mins * 1; // 1分 = 1 EXP
-  document.getElementById('calc-preview').textContent = `獲得予定: +${expectedExp} EXP (${mins}分)`;
+  const input = document.getElementById('manual-minutes');
+  let mins = parseInt(input.value) || 0;
+  const previewEl = document.getElementById('calc-preview');
+
+  if (mins > MAX_MINUTES) {
+    input.value = MAX_MINUTES;
+    mins = MAX_MINUTES;
+    previewEl.innerHTML = `<span style="color:var(--red);">⚠️ 1回の上限は24時間(${MAX_MINUTES}分)です</span>`;
+    return;
+  }
+
+  if (mins <= 0) {
+    previewEl.textContent = `獲得予定: +0 EXP`;
+    return;
+  }
+
+  const expectedExp = mins * 1;
+  previewEl.textContent = `獲得予定: +${expectedExp} EXP (${mins}分)`;
 }
 
-// --- ⚙️ エナジー ➔ EXP 変換処理 ---
 function convertEnergyToExp(baseExp) {
   if (stockEnergy <= 0 || baseExp <= 0) return { realGained: baseExp, energyUsed: 0 };
 
-  // 1EXPにつき、最大2エナジーを消費してEXPに変換
   const maxEnergyCanConvert = baseExp * 2;
   const energyUsed = Math.min(stockEnergy, maxEnergyCanConvert);
   const convertedExp = Math.floor(energyUsed / 2);
@@ -324,7 +329,7 @@ function convertEnergyToExp(baseExp) {
   return { realGained: totalGained, energyUsed };
 }
 
-// --- ⏱️ タイマー機能 ---
+// ⏱️ タイマー機能
 let timerInterval = null;
 let timerSeconds = 0;
 let isTimerRunning = false;
@@ -358,9 +363,7 @@ function toggleTimer() {
     const secs = timerSeconds % 60;
     const timeText = mins > 0 ? `${mins}分${secs}秒` : `${secs}秒`;
     
-    // 1分＝1EXP (最低でも1EXP)
     const baseExp = Math.max(1, mins);
-
     const { realGained, energyUsed } = convertEnergyToExp(baseExp);
 
     let msg = `⏱️ 【${taskName}】(${timeText}) 達成！\n+${realGained} EXP獲得！`;
@@ -372,7 +375,7 @@ function toggleTimer() {
     checkAchievements('timer_master');
     if (mins >= 90) checkAchievements('long_task');
 
-    addLog(`集中: ${taskName} (${timeText})`, realGained, energyUsed > 0 ? `エナジー${energyUsed}消費` : '基本評価');
+    addLog(`集中: ${taskName} (${timeText})`, realGained, energyUsed > 0 ? `エナジー${energyUsed}消費` : '基本評価', mins);
     timerSeconds = 0;
     updateTimerDisplay();
   }
@@ -395,7 +398,7 @@ function updateTimerDisplay() {
   document.getElementById('timer-display').textContent = `${m}:${s}`;
 }
 
-// --- ✍️ 手動判定ロジック ---
+// ✍️ 手動判定
 function checkNegative(text) {
   const directNegatives = ["サボっ", "寝てた", "寝坊", "遅刻", "ダラダラ", "忘れた", "怠けた", "YouTube", "TikTok", "スマホいじっ"];
   for (let w of directNegatives) {
@@ -409,14 +412,20 @@ function evaluateEffort() {
   const minEl = document.getElementById('manual-minutes');
   
   const taskName = taskEl.value.trim() || "努力作業";
-  const mins = parseInt(minEl.value) || 0;
+  let mins = parseInt(minEl.value) || 0;
 
   if (mins <= 0) {
     alert("努力時間を1分以上で設定してください。");
     return;
   }
 
-  let baseExp = mins * 1; // 1分 = 1 EXP
+  if (mins > MAX_MINUTES) {
+    alert(`1回に記録できる上限は24時間（${MAX_MINUTES}分）までです。`);
+    mins = MAX_MINUTES;
+    minEl.value = MAX_MINUTES;
+  }
+
+  let baseExp = mins * 1;
   let reasons = [];
   const negCheck = checkNegative(taskName);
 
@@ -427,7 +436,7 @@ function evaluateEffort() {
     void document.body.offsetWidth;
     document.body.classList.add('flash-red');
 
-    addLog(taskName, baseExp, reasons.join("・"));
+    addLog(taskName, baseExp, reasons.join("・"), 0);
   } else {
     const { realGained, energyUsed } = convertEnergyToExp(baseExp);
     
@@ -442,13 +451,12 @@ function evaluateEffort() {
     resBox.style.display = 'block';
 
     if (mins >= 90) checkAchievements('long_task');
-    addLog(`${taskName} (${mins}分)`, realGained, reasons.join("・"));
+    addLog(`${taskName} (${mins}分)`, realGained, reasons.join("・"), mins);
   }
 
   taskEl.value = '';
 }
 
-// 🏆 実績（アチーブメント）チェック
 function checkAchievements(specificId = null) {
   if (logs.length > 0) unlockAchieve('first_step');
   if (specificId) unlockAchieve(specificId);
@@ -486,73 +494,114 @@ function renderAchievements() {
   }).join('');
 }
 
-// ログ記録
-function addLog(text, pts, reason) {
+function addLog(text, pts, reason, durationMins = 0) {
   totalExp = Math.max(0, totalExp + pts);
   const now = new Date();
+  const isoDate = now.toISOString().split('T')[0]; // YYYY-MM-DD
   const dateStr = `${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
   
-  logs.push({ text, pts, cumul: totalExp, date: dateStr });
+  logs.push({ text, pts, durationMins, isoDate, cumul: totalExp, date: dateStr });
 
   localStorage.setItem('proto_pro_exp', totalExp);
   localStorage.setItem('proto_pro_logs', JSON.stringify(logs));
   
   checkAchievements();
   updateUI();
-  drawCumulGraph();
+  drawDailyBarChart();
 }
 
-// --- 📊 グラフ描画 ---
-function drawCumulGraph() {
-  const canvas = document.getElementById('cumulChart');
+// 📊 日毎の努力時間 棒グラフ描画 (Canvas)
+function drawDailyBarChart() {
+  const canvas = document.getElementById('dailyBarChart');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   canvas.width = canvas.parentElement.clientWidth;
-  canvas.height = 130;
+  canvas.height = 160;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const recentLogs = logs.slice(-10);
-  if (recentLogs.length < 2) {
-    ctx.fillStyle = "#9090a0";
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("データが2件以上になるとグラフが表示されます", canvas.width / 2, 65);
-    return;
+  // 直近7日分のISO日付配列を生成 (例: ["2026-09-08", ... "2026-09-14"])
+  const days = [];
+  const dayLabels = [];
+  const today = new Date();
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const iso = d.toISOString().split('T')[0];
+    const label = `${d.getMonth() + 1}/${d.getDate()}`;
+    days.push(iso);
+    dayLabels.push(label);
   }
 
-  const cumulValues = recentLogs.map(l => l.cumul !== undefined ? l.cumul : l.pts);
-  const maxVal = Math.max(...cumulValues, 100);
-  const minVal = Math.min(...cumulValues, 0);
-  const padding = 25;
-  const stepX = (canvas.width - padding * 2) / (cumulValues.length - 1);
-
-  ctx.beginPath();
-  ctx.strokeStyle = "#FFB800";
-  ctx.lineWidth = 3;
-
-  cumulValues.forEach((val, i) => {
-    const x = padding + i * stepX;
-    const ratio = (val - minVal) / (maxVal - minVal || 1);
-    const y = (canvas.height - padding) - ratio * (canvas.height - padding * 2);
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
+  // 日付ごとの合計分数を計算
+  const dailyTotals = days.map(iso => {
+    return logs.reduce((acc, log) => {
+      if (log.isoDate === iso && log.durationMins > 0) {
+        return acc + log.durationMins;
+      }
+      return acc;
+    }, 0);
   });
+
+  const maxVal = Math.max(...dailyTotals, 120); // 最低スケールは120分
+  const paddingBottom = 25;
+  const paddingTop = 25;
+  const chartHeight = canvas.height - paddingBottom - paddingTop;
+  const barWidth = Math.floor((canvas.width - 40) / 7) - 8;
+
+  // 60分の点線ガイドライン描画
+  const targetMin = 60;
+  const targetY = (canvas.height - paddingBottom) - (targetMin / maxVal) * chartHeight;
+  ctx.beginPath();
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+  ctx.lineWidth = 1;
+  ctx.moveTo(15, targetY);
+  ctx.lineTo(canvas.width - 15, targetY);
   ctx.stroke();
+  ctx.setLineDash([]); // リセット
 
-  cumulValues.forEach((val, i) => {
-    const x = padding + i * stepX;
-    const ratio = (val - minVal) / (maxVal - minVal || 1);
-    const y = (canvas.height - padding) - ratio * (canvas.height - padding * 2);
+  ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+  ctx.font = "9px sans-serif";
+  ctx.textAlign = "right";
+  ctx.fillText("60分", canvas.width - 5, targetY - 2);
 
-    ctx.beginPath();
-    ctx.arc(x, y, 4, 0, Math.PI * 2);
-    ctx.fillStyle = "#2ed573";
-    ctx.fill();
+  // 棒グラフを描画
+  dailyTotals.forEach((total, i) => {
+    const x = 20 + i * (barWidth + 8);
+    const barHeight = (total / maxVal) * chartHeight;
+    const y = (canvas.height - paddingBottom) - barHeight;
 
-    ctx.fillStyle = "#f0f0f5";
-    ctx.font = "9px sans-serif";
+    // バーの描画
+    if (i === 6) {
+      // 本日分は強調色
+      ctx.fillStyle = "#FFB800";
+    } else {
+      ctx.fillStyle = total > 0 ? "#70a1ff" : "#2a2a32";
+    }
+
+    if (total > 0) {
+      // 角丸の棒
+      const radius = 4;
+      ctx.beginPath();
+      ctx.roundRect(x, y, barWidth, barHeight, [radius, radius, 0, 0]);
+      ctx.fill();
+
+      // 数値表示 (バーの上)
+      ctx.fillStyle = "#f0f0f5";
+      ctx.font = "10px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(`${total}分`, x + barWidth / 2, y - 4);
+    } else {
+      // 0分の空バー
+      ctx.fillRect(x, canvas.height - paddingBottom - 2, barWidth, 2);
+    }
+
+    // 日付ラベル (バーの下)
+    ctx.fillStyle = i === 6 ? "#FFB800" : "#9090a0";
+    ctx.font = "10px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(`${val}`, x, y - 8);
+    ctx.fillText(dayLabels[i], x + barWidth / 2, canvas.height - 8);
   });
 }
 
@@ -583,7 +632,7 @@ function updateUI() {
 
 checkDailyReset();
 updateUI();
-setTimeout(drawCumulGraph, 100);
+setTimeout(drawDailyBarChart, 100);
 </script>
 </body>
 </html>
